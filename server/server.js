@@ -1,129 +1,159 @@
+// server/server.js (versión actualizada)
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const db = require('./database');
-const nodemailer = require('nodemailer');
 require('dotenv').config();
+
+// Importar rutas
+const apiRoutes = require('./routes/api');
+const { router: authRoutes, requireAuth } = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://tudominio.com', 'https://www.tudominio.com']
+        : ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Servir archivos estáticos
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/admin', express.static(path.join(__dirname, '../admin-panel')));
 
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
+// Middleware de logging
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
 });
 
+// Rutas de la API
+app.use('/api', apiRoutes);
+app.use('/api/auth', authRoutes);
 
-app.post('/api/contacto', (req, res) => {
-    const { nombre, email, telefono, asunto, mensaje } = req.body;
-    
-    // Guardar en base de datos
-    db.run(`INSERT INTO mensajes (nombre, email, telefono, asunto, mensaje) 
-            VALUES (?, ?, ?, ?, ?)`, 
-            [nombre, email, telefono, asunto, mensaje], 
-            function(err) {
+// Ruta de prueba
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        service: 'RivGam Consultoría API'
+    });
+});
+
+// Ruta para verificar base de datos
+app.get('/api/db-status', requireAuth, (req, res) => {
+    db.get("SELECT name FROM sqlite_master WHERE type='table'", (err, row) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
         
-        const mensajeId = this.lastID;
-        
-        // Enviar correo automático
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Gracias por contactar a RivGam Digital Studio',
-            html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #4a6ee0;">¡Hola ${nombre}!</h2>
-                    <p>Hemos recibido tu mensaje con el asunto: <strong>${asunto}</strong></p>
-                    <p>Nuestro equipo se pondrá en contacto contigo en las próximas 24 horas.</p>
-                    <p><strong>Resumen de tu mensaje:</strong></p>
-                    <p>${mensaje}</p>
-                    <hr>
-                    <p style="color: #666; font-size: 12px;">
-                        RivGam Digital Studio - Consultoría de Diseño Web<br>
-                        Tel: +52 55 52524633<br>
-                        Email: rivergam49@gmail.com
-                    </p>
-                </div>
-            `
-        };
-        
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error('Error enviando correo:', error);
-                return res.status(500).json({ 
-                    success: false, 
-                    message: 'Mensaje guardado pero error al enviar correo' 
-                });
+        db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, tables) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
             }
             
+            const tableInfo = [];
+            let completed = 0;
             
-            db.run("UPDATE mensajes SET respondido = 1, respuesta = ? WHERE id = ?", 
-                ['Correo automático enviado', mensajeId]);
-            
-            res.json({ 
-                success: true, 
-                message: 'Mensaje enviado y correo automático enviado',
-                id: mensajeId 
+            tables.forEach(table => {
+                db.get(`SELECT COUNT(*) as count FROM ${table.name}`, (err, result) => {
+                    tableInfo.push({
+                        table: table.name,
+                        records: result.count
+                    });
+                    
+                    completed++;
+                    
+                    if (completed === tables.length) {
+                        res.json({
+                            status: 'connected',
+                            tables: tableInfo,
+                            totalTables: tables.length
+                        });
+                    }
+                });
             });
         });
     });
 });
 
-
-app.post('/api/login', (req, res) => {
-    const { usuario, password } = req.body;
+// Ruta para backup de la base de datos (protegida)
+app.get('/api/backup', requireAuth, (req, res) => {
+    const backupPath = path.join(__dirname, 'backups', `backup-${Date.now()}.db`);
     
-    db.get("SELECT * FROM administradores WHERE usuario = ? AND password = ?", 
-        [usuario, password], (err, row) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        
-        if (row) {
-            res.json({ 
-                success: true, 
-                user: {
-                    id: row.id,
-                    usuario: row.usuario,
-                    email: row.email
-                }
+    db.backup(backupPath)
+        .then(() => {
+            res.json({
+                success: true,
+                message: 'Backup creado exitosamente',
+                path: backupPath
             });
-        } else {
-            res.status(401).json({ 
-                success: false, 
-                message: 'Credenciales incorrectas' 
-            });
-        }
+        })
+        .catch(err => {
+            console.error('Error en backup:', err);
+            res.status(500).json({ error: err.message });
+        });
+});
+
+// Manejo de errores 404 para API
+app.use('/api/*', (req, res) => {
+    res.status(404).json({ 
+        success: false, 
+        message: 'Ruta de API no encontrada' 
     });
 });
 
+// Para todas las demás rutas, servir el index.html (SPA)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
-app.get('/api/mensajes', (req, res) => {
-  
-    db.all("SELECT * FROM mensajes ORDER BY fecha DESC", (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(rows);
+// Middleware de manejo de errores
+app.use((err, req, res, next) => {
+    console.error('Error:', err.stack);
+    
+    const statusCode = err.statusCode || 500;
+    const message = process.env.NODE_ENV === 'production' 
+        ? 'Error interno del servidor' 
+        : err.message;
+    
+    res.status(statusCode).json({
+        success: false,
+        message: message,
+        ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
     });
 });
 
-
-app.use('/admin', express.static(path.join(__dirname, '../admin-panel')));
-
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+// Inicializar servidor
+const server = app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`📧 Email configurado: ${process.env.EMAIL_USER ? '✅' : '❌'}`);
+    console.log(`📁 Panel admin: http://localhost:${PORT}/admin/login.html`);
 });
+
+// Manejo de cierre elegante
+process.on('SIGTERM', () => {
+    console.log('Recibido SIGTERM, cerrando servidor...');
+    server.close(() => {
+        console.log('Servidor cerrado.');
+        db.close();
+        process.exit(0);
+    });
+});
+
+process.on('SIGINT', () => {
+    console.log('Recibido SIGINT, cerrando servidor...');
+    server.close(() => {
+        console.log('Servidor cerrado.');
+        db.close();
+        process.exit(0);
+    });
+});
+
+module.exports = app;
