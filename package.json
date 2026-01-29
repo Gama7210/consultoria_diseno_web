@@ -1,0 +1,31 @@
+{
+  "name": "consultoria-web-rivgam",
+  "version": "1.0.0",
+  "description": "Consultoría de Diseño Web Riverol & Gamiño",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "db:init": "node server/database.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "nodemailer": "^6.9.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "consultoria",
+    "web",
+    "design",
+    "gui",
+    "rivgam"
+  ],
+  "author": "Riverol & Gamiño",
+  "license": "MIT"
+}
