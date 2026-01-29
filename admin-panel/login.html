@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - RivGam</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Estilos adicionales para login */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -37,6 +39,41 @@
         .login-form input {
             width: 100%;
         }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .login-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        #loginMessage {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .message-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message-error {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border: 1px solid #fecaca;
+        }
     </style>
 </head>
 <body>
@@ -44,18 +81,91 @@
         <div class="login-box">
             <h2>Panel de Administración</h2>
             <form id="loginForm" class="login-form">
+                <div id="loginMessage"></div>
+                
                 <div class="form-group">
                     <input type="text" id="usuario" placeholder="Usuario" required>
                 </div>
+                
                 <div class="form-group">
                     <input type="password" id="password" placeholder="Contraseña" required>
                 </div>
+                
                 <button type="submit" class="btn-primary" style="width: 100%;">Iniciar Sesión</button>
-                <div id="loginMessage" style="margin-top: 1rem;"></div>
+                
+                <div class="login-footer">
+                    <a href="/">← Volver al sitio principal</a>
+                    <p style="margin-top: 10px; color: #4a5568;">
+                        <i class="fas fa-info-circle"></i> Usuario: admin | Contraseña: admin123
+                    </p>
+                </div>
             </form>
         </div>
     </div>
 
-    <script src="../js/admin.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const usuario = document.getElementById('usuario').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('loginMessage');
+            
+            // Limpiar mensaje anterior
+            messageDiv.style.display = 'none';
+            messageDiv.className = '';
+            
+            // Validación básica
+            if (!usuario || !password) {
+                messageDiv.textContent = 'Por favor completa todos los campos';
+                messageDiv.className = 'message-error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ usuario, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Guardar datos de usuario
+                    localStorage.setItem('adminUser', JSON.stringify(data.user));
+                    
+                    // Mostrar mensaje de éxito
+                    messageDiv.textContent = 'Login exitoso. Redirigiendo...';
+                    messageDiv.className = 'message-success';
+                    messageDiv.style.display = 'block';
+                    
+                    // Redirigir al dashboard después de 1 segundo
+                    setTimeout(() => {
+                        window.location.href = '/admin/dashboard.html';
+                    }, 1000);
+                } else {
+                    messageDiv.textContent = data.message || 'Credenciales incorrectas';
+                    messageDiv.className = 'message-error';
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.textContent = 'Error de conexión con el servidor';
+                messageDiv.className = 'message-error';
+                messageDiv.style.display = 'block';
+            }
+        });
+        
+        // Permitir login con Enter
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
 </body>
 </html>
