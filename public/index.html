@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RivGam Digital Studio - Consultoría de Diseño Web</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-text">RivGam</span>
+                <span class="logo-sub">Digital Studio</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#portafolio">Portafolio</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="/admin/login.html" class="btn-admin">Admin</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Transformamos tu visión digital en realidad</h1>
+                <p>Consultoría especializada en diseño web UI/UX, desarrollo responsive y experiencias digitales memorables</p>
+                <a href="#contacto" class="btn-primary">Solicitar Consulta</a>
+            </div>
+            <div class="hero-image">
+                <img src="assets/images/hero-design.svg" alt="Diseño Web">
+            </div>
+        </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="services">
+        <div class="container">
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-palette"></i>
+                    <h3>Diseño UI/UX</h3>
+                    <p>Interfaces intuitivas y experiencias de usuario excepcionales</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-code"></i>
+                    <h3>Desarrollo Web</h3>
+                    <p>Sitios web responsivos y aplicaciones modernas</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-search"></i>
+                    <h3>SEO Optimización</h3>
+                    <p>Mejoramos tu visibilidad en motores de búsqueda</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Consultoría Digital</h3>
+                    <p>Estrategias personalizadas para tu crecimiento online</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="contact">
+        <div class="container">
+            <h2 class="section-title">Contáctanos</h2>
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <h3>Información de Contacto</h3>
+                    <p><i class="fas fa-envelope"></i> rivergam49@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +52 55 52524633</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Estado de México, Teoloyucan</p>
+                </div>
+                <form id="contactForm" class="contact-form">
+                    <div class="form-group">
+                        <input type="text" id="nombre" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" placeholder="Correo electrónico" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="telefono" placeholder="Teléfono">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="asunto" placeholder="Asunto" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="mensaje" rows="5" placeholder="Tu mensaje..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Enviar Mensaje</button>
+                    <div id="formMessage"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RivGam Digital Studio. Todos los derechos reservados.</p>
+            <p>Riverol & Gamiño Consultoría en Diseño Web</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>
