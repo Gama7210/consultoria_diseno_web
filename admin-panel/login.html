@@ -25,6 +25,17 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
+        
+        /* Error animation */
+        .error-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
@@ -71,9 +82,7 @@
                             <a href="/">
                                 <i class="fas fa-arrow-left"></i> Volver al sitio principal
                             </a>
-                            <p style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.7;">
-                                Usuario: <strong>admin</strong> | Contraseña: <strong>admin123</strong>
-                            </p>
+                            
                         </div>
                     </form>
                 </div>
@@ -116,8 +125,10 @@
                 console.log('Datos del servidor:', data);
                 
                 if (data.success) {
-                    // Guardar datos de usuario
+                    // IMPORTANTE: Guardar datos de usuario Y token
                     localStorage.setItem('adminUser', JSON.stringify(data.user));
+                    localStorage.setItem('adminToken', 'rivgam-auth-' + Date.now());
+                    localStorage.setItem('lastLogin', new Date().toISOString());
                     
                     // Mostrar mensaje de éxito
                     messageText.textContent = '✓ Login exitoso. Redirigiendo...';
@@ -172,6 +183,12 @@
         // Auto-focus en usuario al cargar
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usuario').focus();
+            
+            // Limpiar localStorage si hay un parámetro de logout
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('logout')) {
+                localStorage.clear();
+            }
         });
     </script>
 </body>

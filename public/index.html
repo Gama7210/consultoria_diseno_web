@@ -4,31 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RivGam Digital Studio - Consultoría de Diseño Web</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
 </head>
 <body>
+    <!-- Preloader (opcional) -->
+    <div id="preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s, visibility 0.5s;">
+        <div class="spinner" style="width: 50px; height: 50px; border: 3px solid #f3f3f3; border-top: 3px solid #6786ec; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <style>
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        </style>
+    </div>
+
     <!-- Navegación -->
     <nav class="navbar">
         <div class="container">
-            <div class="logo">
+            <a href="#inicio" class="logo">
                 <span class="logo-text">RivGam</span>
                 <span class="logo-sub">Digital Studio</span>
-            </div>
+            </a>
             <ul class="nav-menu">
-                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#inicio" class="active">Inicio</a></li>
                 <li><a href="#servicios">Servicios</a></li>
                 <li><a href="#portafolio">Portafolio</a></li>
                 <li><a href="#nosotros">Nosotros</a></li>
                 <li><a href="#contacto">Contacto</a></li>
-             <li><a href="/admin/login.html" class="btn-admin">Admin</a></li>
+                <li><a href="/admin/login.html" class="btn-admin">Admin</a></li>
             </ul>
-            <div class="hamburger">
+            <button class="hamburger" aria-label="Menú de navegación">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </div>
     </nav>
 
@@ -36,12 +45,24 @@
     <section id="inicio" class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1>Transformamos tu visión digital en realidad</h1>
-                <p>Consultoría especializada en diseño web UI/UX, desarrollo responsive y experiencias digitales memorables</p>
-                <a href="#contacto" class="btn-primary">Solicitar Consulta</a>
+                <h1>Transformamos tu <span class="typewriter">visión digital</span> en realidad</h1>
+                <p>Consultoría especializada en diseño web UI/UX, desarrollo responsive y experiencias digitales memorables para potenciar tu negocio en línea.</p>
+                <a href="#contacto" class="btn-primary">
+                    <i class="fas fa-rocket"></i> Solicitar Consulta Gratuita
+                </a>
+                <div style="margin-top: 2rem; display: flex; gap: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                        <span style="color: rgba(255, 255, 255, 0.9);">+50 Proyectos</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                        <span style="color: rgba(255, 255, 255, 0.9);">100% Satisfacción</span>
+                    </div>
+                </div>
             </div>
             <div class="hero-image">
-                <img src="assets/images/hero-design.svg" alt="Diseño Web">
+                <img src="assets/images/hero-design.svg" alt="Diseño Web y Desarrollo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iNTAiIHk9IjUwIiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzY3ODZlYyIgb3BhY2l0eT0iMC4xIi8+PHJlY3QgeD0iODAiIHk9IjgwIiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNjc4NmVjIi8+PHJlY3QgeD0iODAiIHk9IjE0MCIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIyMCIgZmlsbD0iIzZjNjNmZiIvPjxyZWN0IHg9IjgwIiB5PSIxODAiIHdpZHRoPSIxNTAiIGhlaWdodD0iMjAiIGZpbGw9IiM2YzYzZmYiLz48Y2lyY2xlIGN4PSIzMDAiIGN5PSIxNTAiIHI9IjMwIiBmaWxsPSIjMTA5ODgxIi8+PHBhdGggZD0iTTEwMCAxMDAgTDE1MCAxMjAgTDEzMCAxNzAgWiIgZmlsbD0iI2Y1OWUwYiIvPjwvc3ZnPgo='">
             </div>
         </div>
     </section>
@@ -50,26 +71,142 @@
     <section id="servicios" class="services">
         <div class="container">
             <h2 class="section-title">Nuestros Servicios</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">Ofrecemos soluciones digitales integrales que impulsan tu presencia online y generan resultados tangibles.</p>
             <div class="services-grid">
-                <div class="service-card">
+                <div class="service-card fade-in delay-1">
                     <i class="fas fa-palette"></i>
                     <h3>Diseño UI/UX</h3>
-                    <p>Interfaces intuitivas y experiencias de usuario excepcionales</p>
+                    <p>Interfaces intuitivas y experiencias de usuario excepcionales que cautivan a tus clientes.</p>
+                    <ul style="text-align: left; margin-top: 1rem; padding-left: 1rem;">
+                        <li>Diseño centrado en el usuario</li>
+                        <li>Prototipos interactivos</li>
+                        <li>Testing de usabilidad</li>
+                    </ul>
                 </div>
-                <div class="service-card">
+                <div class="service-card fade-in delay-2">
                     <i class="fas fa-code"></i>
                     <h3>Desarrollo Web</h3>
-                    <p>Sitios web responsivos y aplicaciones modernas</p>
+                    <p>Sitios web responsivos y aplicaciones modernas con las últimas tecnologías.</p>
+                    <ul style="text-align: left; margin-top: 1rem; padding-left: 1rem;">
+                        <li>Desarrollo a medida</li>
+                        <li>Tiendas online (e-commerce)</li>
+                        <li>Optimización de rendimiento</li>
+                    </ul>
                 </div>
-                <div class="service-card">
+                <div class="service-card fade-in delay-3">
                     <i class="fas fa-search"></i>
-                    <h3>SEO Optimización</h3>
-                    <p>Mejoramos tu visibilidad en motores de búsqueda</p>
+                    <h3>SEO & Marketing</h3>
+                    <p>Mejoramos tu visibilidad en motores de búsqueda y potenciamos tu marketing digital.</p>
+                    <ul style="text-align: left; margin-top: 1rem; padding-left: 1rem;">
+                        <li>Optimización SEO</li>
+                        <li>Estrategias de contenido</li>
+                        <li>Analítica web</li>
+                    </ul>
                 </div>
-                <div class="service-card">
+                <div class="service-card fade-in">
                     <i class="fas fa-chart-line"></i>
                     <h3>Consultoría Digital</h3>
-                    <p>Estrategias personalizadas para tu crecimiento online</p>
+                    <p>Estrategias personalizadas para tu crecimiento online y transformación digital.</p>
+                    <ul style="text-align: left; margin-top: 1rem; padding-left: 1rem;">
+                        <li>Auditoría digital</li>
+                        <li>Planificación estratégica</li>
+                        <li>Capacitación de equipos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portafolio -->
+    <section id="portafolio" class="portfolio">
+        <div class="container">
+            <h2 class="section-title">Nuestro Portafolio</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">Descubre algunos de los proyectos en los que hemos trabajado y que han transformado negocios.</p>
+            <div class="portfolio-grid">
+                <div class="portfolio-card fade-in delay-1">
+                    <div class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <a href="#" class="view-project">Ver Proyecto</a>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Tienda Online Moda</h3>
+                        <p>E-commerce completo con sistema de pagos y gestión de inventario.</p>
+                        <div class="portfolio-tags">
+                            <span class="tag">E-commerce</span>
+                            <span class="tag">React</span>
+                            <span class="tag">Node.js</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-card fade-in delay-2">
+                    <div class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <a href="#" class="view-project">Ver Proyecto</a>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Portal Educativo</h3>
+                        <p>Plataforma de aprendizaje online con aulas virtuales y sistema de evaluaciones.</p>
+                        <div class="portfolio-tags">
+                            <span class="tag">Educación</span>
+                            <span class="tag">Laravel</span>
+                            <span class="tag">Vue.js</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-card fade-in delay-3">
+                    <div class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <a href="#" class="view-project">Ver Proyecto</a>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>App Delivery</h3>
+                        <p>Aplicación móvil para servicio de delivery con seguimiento en tiempo real.</p>
+                        <div class="portfolio-tags">
+                            <span class="tag">Mobile</span>
+                            <span class="tag">React Native</span>
+                            <span class="tag">Firebase</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="#contacto" class="btn-primary">
+                    <i class="fas fa-eye"></i> Ver Más Proyectos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nosotros -->
+    <section id="nosotros" class="about">
+        <div class="container">
+            <h2 class="section-title">Sobre Nosotros</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">Somos Riverol & Gamiño, un equipo apasionado por crear soluciones digitales que marcan la diferencia.</p>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Transformando ideas en experiencias digitales</h3>
+                    <p>En RivGam Digital Studio combinamos creatividad, tecnología y estrategia para ayudar a negocios a prosperar en el mundo digital. Con más de 5 años de experiencia, hemos desarrollado un enfoque único que garantiza resultados excepcionales.</p>
+                    <p>Nuestra filosofía se basa en la colaboración estrecha con cada cliente, entendiendo sus necesidades y objetivos para ofrecer soluciones personalizadas que generen impacto real.</p>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Proyectos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">30+</div>
+                            <div class="stat-label">Clientes</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-label">Satisfacción</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="assets/images/about-team.svg" alt="Equipo RivGam" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDUwMCA0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiNmOGY5ZmEiLz48Y2lyY2xlIGN4PSIyNTAiIGN5PSIxNTAiIHI9IjgwIiBmaWxsPSIjNjc4NmVjIi8+PHJlY3QgeD0iMTUwIiB5PSIyNTAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjc4NmVjIi8+PGNpcmNsZSBjeD0iMTgwIiBjeT0iMTAwIiByPSI0MCIgZmlsbD0iIzZjNjNmZiIvPjxjaXJjbGUgY3g9IjMyMCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiM2YzYzZmYiLz48L3N2Zz4K'">
                 </div>
             </div>
         </div>
@@ -79,44 +216,158 @@
     <section id="contacto" class="contact">
         <div class="container">
             <h2 class="section-title">Contáctanos</h2>
-            <div class="contact-wrapper">
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">¿Listo para llevar tu proyecto al siguiente nivel? ¡Hablemos!</p>
+            <div class="contact-wrapper fade-in">
                 <div class="contact-info">
                     <h3>Información de Contacto</h3>
-                    <p><i class="fas fa-envelope"></i> rivergam49@gmail.com</p>
-                    <p><i class="fas fa-phone"></i> +52 55 52524633</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Estado de México, Teoloyucan</p>
+                    <div class="contact-details">
+                        <div class="contact-detail">
+                            <i class="fas fa-envelope"></i>
+                            <div class="detail-content">
+                                <h4>Email</h4>
+                                <p>rivergam49@gmail.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-detail">
+                            <i class="fas fa-phone"></i>
+                            <div class="detail-content">
+                                <h4>Teléfono</h4>
+                                <p>+52 55 5252 4633</p>
+                            </div>
+                        </div>
+                        <div class="contact-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="detail-content">
+                                <h4>Ubicación</h4>
+                                <p>Estado de México, Teoloyucan</p>
+                            </div>
+                        </div>
+                        <div class="contact-detail">
+                            <i class="fas fa-clock"></i>
+                            <div class="detail-content">
+                                <h4>Horarios</h4>
+                                <p>Lun-Vie: 9:00 - 18:00</p>
+                                <p>Sábados: 10:00 - 14:00</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <form id="contactForm" class="contact-form">
                     <div class="form-group">
-                        <input type="text" id="nombre" placeholder="Nombre completo" required>
+                        <input type="text" id="nombre" placeholder=" " required>
+                        <label for="nombre">Nombre completo</label>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="email" placeholder="Correo electrónico" required>
+                        <input type="email" id="email" placeholder=" " required>
+                        <label for="email">Correo electrónico</label>
                     </div>
                     <div class="form-group">
-                        <input type="tel" id="telefono" placeholder="Teléfono">
+                        <input type="tel" id="telefono" placeholder=" ">
+                        <label for="telefono">Teléfono (opcional)</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="asunto" placeholder="Asunto" required>
+                        <input type="text" id="asunto" placeholder=" " required>
+                        <label for="asunto">Asunto</label>
                     </div>
                     <div class="form-group">
-                        <textarea id="mensaje" rows="5" placeholder="Tu mensaje..." required></textarea>
+                        <textarea id="mensaje" rows="5" placeholder=" " required></textarea>
+                        <label for="mensaje">Tu mensaje</label>
                     </div>
-                    <button type="submit" class="btn-primary">Enviar Mensaje</button>
+                    <button type="submit" class="btn-primary" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                    </button>
                     <div id="formMessage"></div>
                 </form>
             </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2026 RivGam Digital Studio. Todos los derechos reservados.</p>
-            <p>Riverol & Gamiño Consultoría en Diseño Web</p>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="logo">
+                        <span class="logo-text">RivGam</span>
+                        <span class="logo-sub">Digital Studio</span>
+                    </div>
+                    <p style="color: rgba(255, 255, 255, 0.7); margin-top: 1rem; font-size: 1rem;">Transformamos visiones en experiencias digitales excepcionales.</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <a href="#" style="color: white; font-size: 1.25rem;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: white; font-size: 1.25rem;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="color: white; font-size: 1.25rem;"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" style="color: white; font-size: 1.25rem;"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#servicios">Servicios</a></li>
+                        <li><a href="#portafolio">Portafolio</a></li>
+                        <li><a href="#nosotros">Nosotros</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Servicios</h4>
+                    <ul>
+                        <li><a href="#servicios">Diseño UI/UX</a></li>
+                        <li><a href="#servicios">Desarrollo Web</a></li>
+                        <li><a href="#servicios">SEO & Marketing</a></li>
+                        <li><a href="#servicios">Consultoría Digital</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Política de Privacidad</a></li>
+                        <li><a href="#">Términos de Servicio</a></li>
+                        <li><a href="#">Aviso Legal</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 RivGam Digital Studio. Todos los derechos reservados.</p>
+                <p>Riverol & Gamiño Consultoría en Diseño Web</p>
+                <p style="font-size: 0.875rem; margin-top: 1rem;">Desarrollado con <i class="fas fa-heart" style="color: #ff6b6b;"></i> por nuestro equipo</p>
+            </div>
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- Scripts -->
+    <script src="js/animations.js"></script>
     <script src="js/contact.js"></script>
+    
+    <!-- Estilos adicionales para tooltips -->
+    <style>
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--dark);
+        }
+    </style>
 </body>
 </html>
