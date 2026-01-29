@@ -6,164 +6,432 @@
     <title>Dashboard - RivGam Admin</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
     <style>
-        /* Estilos específicos del dashboard */
-        .admin-container {
-            padding: 80px 0 40px;
-            min-height: 100vh;
-            background: #f1f5f9;
+        /* Chart container */
+        .chart-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
         }
-
-        .admin-header {
+        
+        .chart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--primary);
+            margin-bottom: 1.5rem;
         }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-
-        .stat-card i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .stat-card h3 {
-            font-size: 2rem;
+        
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
             color: var(--dark);
         }
-
-        .messages-table {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
+        
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
         }
-
-        table {
+        
+        .chart-period {
+            font-size: 0.875rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
             width: 100%;
-            border-collapse: collapse;
         }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+        
+        /* Quick actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
-
-        th {
-            background: var(--primary);
-            color: white;
-        }
-
-        .respondido {
-            color: var(--success);
-            font-weight: bold;
-        }
-
-        .no-respondido {
-            color: var(--danger);
-            font-weight: bold;
-        }
-
-        .btn-logout {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+        
+        .action-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
             cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+        
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .action-icon.email { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .action-icon.export { background: linear-gradient(135deg, #10b981, #047857); }
+        .action-icon.settings { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .action-icon.help { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        
+        .action-info h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-info p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        
+        /* Welcome banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 1%);
+            background-size: 20px 20px;
+            opacity: 0.1;
+        }
+        
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+        }
+        
+        .welcome-content h2 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .welcome-content p {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-light {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-light:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <span class="logo-text">RivGam</span>
-                <span class="logo-sub">Admin Panel</span>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-crown"></i>
+                    <span>RivGam Admin</span>
+                </div>
             </div>
-            <button id="logoutBtn" class="btn-logout">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-            </button>
-        </div>
-    </nav>
-
-    <div class="admin-container">
-        <div class="container">
-            <div class="admin-header">
-                <h1>Dashboard de Mensajes</h1>
-                <div id="lastUpdate"></div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                
+                <a href="#" class="nav-item">
+                    <i class="fas fa-envelope"></i>
+                    <span class="nav-label">Mensajes</span>
+                    <span class="nav-badge" id="pendingCount">0</span>
+                </a>
+                
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="nav-label">Estadísticas</span>
+                </a>
+                
+                <a href="#" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-label">Clientes</span>
+                </a>
+                
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-label">Configuración</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Administrador</div>
+                        <div class="user-role">Administrador</div>
+                    </div>
+                    <button class="btn-logout" id="logoutBtn" title="Cerrar sesión">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
             </div>
-
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                    <p>Bienvenido al panel de administración de RivGam Digital Studio</p>
+                </div>
+                
+                <div class="topbar-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="Buscar mensajes..." id="searchInput">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="welcome-content">
+                    <h2>¡Hola, <span id="welcomeName">Administrador</span>!</h2>
+                    <p>Gestiona todos los mensajes de contacto, revisa estadísticas y mantén tu sitio web actualizado desde este panel.</p>
+                    <button class="btn btn-light btn-sm">
+                        <i class="fas fa-question-circle"></i> Ayuda rápida
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <i class="fas fa-envelope"></i>
-                    <h3 id="totalMensajes">0</h3>
-                    <p>Total Mensajes</p>
+                    <div class="stat-header">
+                        <div class="stat-icon total">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span class="stat-trend trend-up" id="totalTrend">
+                            <i class="fas fa-arrow-up"></i> 12%
+                        </span>
+                    </div>
+                    <div class="stat-value" id="totalMensajes">0</div>
+                    <div class="stat-label">Total de Mensajes</div>
                 </div>
+                
                 <div class="stat-card">
-                    <i class="fas fa-check-circle"></i>
-                    <h3 id="mensajesRespondidos">0</h3>
-                    <p>Respondidos</p>
+                    <div class="stat-header">
+                        <div class="stat-icon respondidos">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <span class="stat-trend trend-up" id="respondidosTrend">
+                            <i class="fas fa-arrow-up"></i> 8%
+                        </span>
+                    </div>
+                    <div class="stat-value" id="mensajesRespondidos">0</div>
+                    <div class="stat-label">Respondidos</div>
                 </div>
+                
                 <div class="stat-card">
-                    <i class="fas fa-clock"></i>
-                    <h3 id="mensajesPendientes">0</h3>
-                    <p>Pendientes</p>
+                    <div class="stat-header">
+                        <div class="stat-icon pendientes">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <span class="stat-trend trend-down" id="pendientesTrend">
+                            <i class="fas fa-arrow-down"></i> 4%
+                        </span>
+                    </div>
+                    <div class="stat-value" id="mensajesPendientes">0</div>
+                    <div class="stat-label">Pendientes</div>
                 </div>
+                
                 <div class="stat-card">
-                    <i class="fas fa-calendar"></i>
-                    <h3 id="mensajesHoy">0</h3>
-                    <p>Hoy</p>
+                    <div class="stat-header">
+                        <div class="stat-icon hoy">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <span class="stat-trend trend-up" id="hoyTrend">
+                            <i class="fas fa-arrow-up"></i> 24%
+                        </span>
+                    </div>
+                    <div class="stat-value" id="mensajesHoy">0</div>
+                    <div class="stat-label">Mensajes Hoy</div>
                 </div>
             </div>
-
-            <div class="messages-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Asunto</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="messagesBody">
-                        <!-- Mensajes cargados dinámicamente -->
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 2rem;">
-                                Cargando mensajes...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="composeEmail()">
+                    <div class="action-icon email">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <div class="action-info">
+                        <h3>Enviar Email</h3>
+                        <p>Envía un correo masivo a tus contactos</p>
+                    </div>
+                </div>
+                
+                <div class="action-card" onclick="exportData()">
+                    <div class="action-icon export">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <div class="action-info">
+                        <h3>Exportar Datos</h3>
+                        <p>Descarga todos los mensajes en CSV</p>
+                    </div>
+                </div>
+                
+                <div class="action-card" onclick="showSettings()">
+                    <div class="action-icon settings">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <div class="action-info">
+                        <h3>Configuración</h3>
+                        <p>Configura tu panel de administración</p>
+                    </div>
+                </div>
+                
+                <div class="action-card" onclick="showHelp()">
+                    <div class="action-icon help">
+                        <i class="fas fa-life-ring"></i>
+                    </div>
+                    <div class="action-info">
+                        <h3>Ayuda</h3>
+                        <p>Guía de uso y soporte</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">Actividad de Mensajes</div>
+                    <div class="chart-period">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Últimos 7 días</span>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="messagesChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Messages Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Mensajes Recientes</h2>
+                    <div class="table-actions">
+                        <button class="btn btn-outline btn-sm" id="filterAll">
+                            <i class="fas fa-list"></i> Todos
+                        </button>
+                        <button class="btn btn-outline btn-sm" id="filterPending">
+                            <i class="fas fa-clock"></i> Pendientes
+                        </button>
+                        <button class="btn btn-outline btn-sm" id="exportBtn">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Asunto</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 3rem;">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        <p>Cargando mensajes...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination" id="pagination">
+                    <!-- Paginación generada dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Last Update -->
+            <div style="text-align: center; margin-top: 2rem; color: #64748b; font-size: 0.875rem;">
+                <p id="lastUpdate">
+                    <i class="fas fa-clock"></i> Última actualización: <span id="updateTime">--:--:--</span>
+                </p>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Detalles del Mensaje</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Contenido cargado dinámicamente -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="closeModal">Cerrar</button>
+                <button class="btn btn-primary" id="replyBtn">
+                    <i class="fas fa-reply"></i> Responder
+                </button>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="admin-dashboard.js"></script>
     <script>
-        // Script básico para cargar mensajes
+        // Script principal del dashboard
+        let messagesChart = null;
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Verificar autenticación
             const userData = localStorage.getItem('adminUser');
@@ -172,56 +440,150 @@
                 return;
             }
             
-            // Cargar mensajes
-            cargarMensajes();
+            // Mostrar información del usuario
+            const user = JSON.parse(userData);
+            document.getElementById('userName').textContent = user.usuario;
+            document.getElementById('userAvatar').textContent = user.usuario.charAt(0).toUpperCase();
+            document.getElementById('welcomeName').textContent = user.usuario;
             
-            // Botón de logout
-            document.getElementById('logoutBtn').addEventListener('click', function() {
-                localStorage.removeItem('adminUser');
-                window.location.href = '/admin/login.html';
-            });
+            // Inicializar dashboard
+            if (typeof dashboard !== 'undefined') {
+                dashboard.init();
+            } else {
+                // Script alternativo si dashboard.js no está cargado
+                loadMessages();
+            }
+            
+            // Event listeners
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('refreshBtn').addEventListener('click', refreshDashboard);
+            document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('modalClose').addEventListener('click', closeModal);
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('searchInput').addEventListener('input', searchMessages);
+            
+            // Filtros
+            document.getElementById('filterAll').addEventListener('click', () => filterMessages('all'));
+            document.getElementById('filterPending').addEventListener('click', () => filterMessages('pending'));
+            
+            // Actualizar cada 30 segundos
+            setInterval(updateLastUpdate, 30000);
+            updateLastUpdate();
         });
         
-        async function cargarMensajes() {
+        function updateLastUpdate() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-ES');
+            document.getElementById('updateTime').textContent = timeString;
+        }
+        
+        function logout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                localStorage.removeItem('adminUser');
+                window.location.href = '/admin/login.html';
+            }
+        }
+        
+        function refreshDashboard() {
+            if (typeof dashboard !== 'undefined') {
+                dashboard.loadData(dashboard.currentPage);
+                dashboard.updateStats();
+            } else {
+                loadMessages();
+            }
+            updateLastUpdate();
+            showToast('Dashboard actualizado', 'success');
+        }
+        
+        function filterMessages(filter) {
+            // Implementar filtrado
+            showToast(`Filtrando por: ${filter}`, 'info');
+        }
+        
+        function searchMessages(e) {
+            const term = e.target.value.toLowerCase();
+            // Implementar búsqueda
+        }
+        
+        function composeEmail() {
+            alert('Funcionalidad de enviar email - Próximamente');
+        }
+        
+        function exportData() {
+            if (typeof dashboard !== 'undefined') {
+                dashboard.exportarDatos();
+            } else {
+                alert('Exportando datos...');
+            }
+        }
+        
+        function showSettings() {
+            alert('Configuración - Próximamente');
+        }
+        
+        function showHelp() {
+            alert('Ayuda - Próximamente');
+        }
+        
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+        
+        function showToast(message, type) {
+            // Crear toast notification
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type}`;
+            toast.style.position = 'fixed';
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '1000';
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Función de carga de mensajes básica
+        async function loadMessages() {
             try {
                 const response = await fetch('/api/mensajes');
                 const mensajes = await response.json();
-                
-                actualizarEstadisticas(mensajes);
-                mostrarMensajes(mensajes);
-                actualizarUltimaCarga();
+                renderMessages(mensajes);
+                updateStats(mensajes);
             } catch (error) {
                 console.error('Error cargando mensajes:', error);
                 document.getElementById('messagesBody').innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; color: var(--danger); padding: 2rem;">
-                            Error al cargar los mensajes
+                        <td colspan="6" style="text-align: center; padding: 3rem; color: var(--danger);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Error al cargar los mensajes</p>
                         </td>
                     </tr>
                 `;
             }
         }
         
-        function actualizarEstadisticas(mensajes) {
-            const total = mensajes.length;
-            const respondidos = mensajes.filter(m => m.respondido).length;
-            const hoy = new Date().toISOString().split('T')[0];
-            const mensajesHoy = mensajes.filter(m => m.fecha && m.fecha.startsWith(hoy)).length;
-            
-            document.getElementById('totalMensajes').textContent = total;
-            document.getElementById('mensajesRespondidos').textContent = respondidos;
-            document.getElementById('mensajesPendientes').textContent = total - respondidos;
-            document.getElementById('mensajesHoy').textContent = mensajesHoy;
-        }
-        
-        function mostrarMensajes(mensajes) {
+        function renderMessages(mensajes) {
             const tbody = document.getElementById('messagesBody');
             
             if (mensajes.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem;">
-                            No hay mensajes todavía
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-inbox"></i>
+                                </div>
+                                <h3>No hay mensajes</h3>
+                                <p>Todavía no has recibido mensajes de contacto.</p>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -231,27 +593,37 @@
             let html = '';
             
             mensajes.forEach(mensaje => {
-                const fecha = mensaje.fecha ? new Date(mensaje.fecha).toLocaleDateString('es-ES', {
+                const fecha = new Date(mensaje.fecha).toLocaleDateString('es-ES', {
                     day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
+                    month: 'short',
                     hour: '2-digit',
                     minute: '2-digit'
-                }) : 'N/A';
+                });
                 
                 html += `
                     <tr>
-                        <td>${mensaje.id}</td>
-                        <td>${mensaje.nombre}</td>
-                        <td>${mensaje.email}</td>
+                        <td>#${mensaje.id.toString().padStart(4, '0')}</td>
+                        <td>
+                            <div style="font-weight: 600;">${mensaje.nombre}</div>
+                            <div style="font-size: 0.75rem; color: #64748b;">${mensaje.email}</div>
+                        </td>
                         <td>${mensaje.asunto}</td>
                         <td>${fecha}</td>
-                        <td class="${mensaje.respondido ? 'respondido' : 'no-respondido'}">
-                            ${mensaje.respondido ? 'Respondido' : 'Pendiente'}
-                        </td>
                         <td>
-                            <button onclick="verDetalle(${mensaje.id})" class="btn-primary" style="padding: 5px 10px;">
+                            <span class="status-badge ${mensaje.respondido ? 'badge-respondido' : 'badge-pendiente'}">
+                                <i class="fas ${mensaje.respondido ? 'fa-check' : 'fa-clock'} badge-icon"></i>
+                                ${mensaje.respondido ? 'Respondido' : 'Pendiente'}
+                            </span>
+                        </td>
+                        <td class="actions-cell">
+                            <button class="btn-icon btn-view" onclick="viewMessage(${mensaje.id})" title="Ver detalles">
                                 <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon btn-edit" onclick="replyMessage(${mensaje.id})" title="Responder">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="deleteMessage(${mensaje.id})" title="Eliminar">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -261,18 +633,106 @@
             tbody.innerHTML = html;
         }
         
-        function verDetalle(id) {
-            alert(`Detalles del mensaje ${id}\nEsta funcionalidad se implementará en la siguiente fase.`);
+        function updateStats(mensajes) {
+            const total = mensajes.length;
+            const respondidos = mensajes.filter(m => m.respondido).length;
+            const pendientes = total - respondidos;
+            const hoy = new Date().toISOString().split('T')[0];
+            const mensajesHoy = mensajes.filter(m => m.fecha && m.fecha.startsWith(hoy)).length;
+            
+            document.getElementById('totalMensajes').textContent = total;
+            document.getElementById('mensajesRespondidos').textContent = respondidos;
+            document.getElementById('mensajesPendientes').textContent = pendientes;
+            document.getElementById('mensajesHoy').textContent = mensajesHoy;
+            document.getElementById('pendingCount').textContent = pendientes;
+            
+            // Actualizar gráfico
+            updateChart(mensajes);
         }
         
-        function actualizarUltimaCarga() {
-            const now = new Date();
-            document.getElementById('lastUpdate').textContent = 
-                `Última actualización: ${now.toLocaleTimeString()}`;
+        function updateChart(mensajes) {
+            const ctx = document.getElementById('messagesChart').getContext('2d');
+            
+            // Datos de ejemplo para el gráfico
+            const labels = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+            const data = labels.map(() => Math.floor(Math.random() * 10) + 1);
+            
+            if (messagesChart) {
+                messagesChart.destroy();
+            }
+            
+            messagesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mensajes',
+                        data: data,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#4f46e5',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#4f46e5',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                stepSize: 2
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
         }
         
-        // Actualizar cada 30 segundos
-        setInterval(cargarMensajes, 30000);
+        function viewMessage(id) {
+            alert(`Viendo mensaje #${id}`);
+            // Implementar vista detallada
+        }
+        
+        function replyMessage(id) {
+            alert(`Respondiendo al mensaje #${id}`);
+            // Implementar respuesta
+        }
+        
+        function deleteMessage(id) {
+            if (confirm('¿Estás seguro de eliminar este mensaje?')) {
+                alert(`Mensaje #${id} eliminado`);
+                // Implementar eliminación
+            }
+        }
     </script>
 </body>
 </html>

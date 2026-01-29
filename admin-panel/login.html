@@ -3,59 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - RivGam</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Admin Login - RivGam Digital Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Login specific animations */
         .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 2rem;
+            animation: fadeIn 0.8s ease;
         }
-
-        .login-box {
-            background: white;
-            padding: 3rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .login-box h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--primary);
+        
+        .logo-icon i {
+            animation: pulse 2s infinite;
         }
-
-        .login-form .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .login-form input {
-            width: 100%;
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-box">
-            <h2>Panel de Administración</h2>
-            <form id="loginForm" class="login-form">
-                <div class="form-group">
-                    <input type="text" id="usuario" placeholder="Usuario" required>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h1>RivGam Studio</h1>
+                        <p>Panel de Administración</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="password" id="password" placeholder="Contraseña" required>
+                
+                <div class="login-body">
+                    <div id="loginMessage" class="alert" style="display: none;">
+                        <i class="fas fa-info-circle alert-icon"></i>
+                        <span id="messageText"></span>
+                    </div>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="usuario" class="form-label">
+                                <i class="fas fa-user"></i> Usuario
+                            </label>
+                            <input type="text" id="usuario" class="form-input" placeholder="admin" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i> Contraseña
+                            </label>
+                            <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Iniciar Sesión</span>
+                        </button>
+                        
+                        <div class="login-footer">
+                            <a href="/">
+                                <i class="fas fa-arrow-left"></i> Volver al sitio principal
+                            </a>
+                            <p style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.7;">
+                                Usuario: <strong>admin</strong> | Contraseña: <strong>admin123</strong>
+                            </p>
+                        </div>
+                    </form>
                 </div>
-                <button type="submit" class="btn-primary" style="width: 100%;">Iniciar Sesión</button>
-                <div id="loginMessage" style="margin-top: 1rem;"></div>
-            </form>
+            </div>
         </div>
     </div>
 
-    <script src="../js/admin.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const usuario = document.getElementById('usuario').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('loginMessage');
+            const messageText = document.getElementById('messageText');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Mostrar loading en el botón
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Verificando...</span>';
+            submitBtn.disabled = true;
+            
+            // Ocultar mensaje anterior
+            messageDiv.style.display = 'none';
+            
+            try {
+                console.log('Enviando login:', { usuario, password });
+                
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ usuario, password })
+                });
+                
+                console.log('Respuesta recibida:', response.status);
+                
+                const data = await response.json();
+                console.log('Datos del servidor:', data);
+                
+                if (data.success) {
+                    // Guardar datos de usuario
+                    localStorage.setItem('adminUser', JSON.stringify(data.user));
+                    
+                    // Mostrar mensaje de éxito
+                    messageText.textContent = '✓ Login exitoso. Redirigiendo...';
+                    messageDiv.className = 'alert alert-success';
+                    messageDiv.style.display = 'flex';
+                    
+                    // Animación de éxito
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i><span>¡Éxito!</span>';
+                    submitBtn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
+                    
+                    // Redirigir después de 1.5 segundos
+                    setTimeout(() => {
+                        console.log('Redirigiendo a dashboard...');
+                        window.location.href = '/admin/dashboard.html';
+                    }, 1500);
+                    
+                } else {
+                    // Mostrar error
+                    messageText.textContent = data.message || '✗ Credenciales incorrectas';
+                    messageDiv.className = 'alert alert-error';
+                    messageDiv.style.display = 'flex';
+                    
+                    // Restaurar botón
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Agregar animación de error
+                    this.classList.add('error-animation');
+                    setTimeout(() => this.classList.remove('error-animation'), 300);
+                }
+                
+            } catch (error) {
+                console.error('Error completo:', error);
+                
+                messageText.textContent = '✗ Error de conexión: ' + error.message;
+                messageDiv.className = 'alert alert-error';
+                messageDiv.style.display = 'flex';
+                
+                // Restaurar botón
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Permitir login con Enter
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+        
+        // Auto-focus en usuario al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('usuario').focus();
+        });
+    </script>
 </body>
 </html>
