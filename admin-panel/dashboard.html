@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - RivGam</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Dashboard - RivGam Admin</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Estilos específicos del dashboard */
         .admin-container {
             padding: 80px 0 40px;
             min-height: 100vh;
@@ -149,12 +150,129 @@
                     </thead>
                     <tbody id="messagesBody">
                         <!-- Mensajes cargados dinámicamente -->
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">
+                                Cargando mensajes...
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <script src="../js/admin.js"></script>
+    <script src="admin-dashboard.js"></script>
+    <script>
+        // Script básico para cargar mensajes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticación
+            const userData = localStorage.getItem('adminUser');
+            if (!userData) {
+                window.location.href = '/admin/login.html';
+                return;
+            }
+            
+            // Cargar mensajes
+            cargarMensajes();
+            
+            // Botón de logout
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                localStorage.removeItem('adminUser');
+                window.location.href = '/admin/login.html';
+            });
+        });
+        
+        async function cargarMensajes() {
+            try {
+                const response = await fetch('/api/mensajes');
+                const mensajes = await response.json();
+                
+                actualizarEstadisticas(mensajes);
+                mostrarMensajes(mensajes);
+                actualizarUltimaCarga();
+            } catch (error) {
+                console.error('Error cargando mensajes:', error);
+                document.getElementById('messagesBody').innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--danger); padding: 2rem;">
+                            Error al cargar los mensajes
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function actualizarEstadisticas(mensajes) {
+            const total = mensajes.length;
+            const respondidos = mensajes.filter(m => m.respondido).length;
+            const hoy = new Date().toISOString().split('T')[0];
+            const mensajesHoy = mensajes.filter(m => m.fecha && m.fecha.startsWith(hoy)).length;
+            
+            document.getElementById('totalMensajes').textContent = total;
+            document.getElementById('mensajesRespondidos').textContent = respondidos;
+            document.getElementById('mensajesPendientes').textContent = total - respondidos;
+            document.getElementById('mensajesHoy').textContent = mensajesHoy;
+        }
+        
+        function mostrarMensajes(mensajes) {
+            const tbody = document.getElementById('messagesBody');
+            
+            if (mensajes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            No hay mensajes todavía
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            mensajes.forEach(mensaje => {
+                const fecha = mensaje.fecha ? new Date(mensaje.fecha).toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'N/A';
+                
+                html += `
+                    <tr>
+                        <td>${mensaje.id}</td>
+                        <td>${mensaje.nombre}</td>
+                        <td>${mensaje.email}</td>
+                        <td>${mensaje.asunto}</td>
+                        <td>${fecha}</td>
+                        <td class="${mensaje.respondido ? 'respondido' : 'no-respondido'}">
+                            ${mensaje.respondido ? 'Respondido' : 'Pendiente'}
+                        </td>
+                        <td>
+                            <button onclick="verDetalle(${mensaje.id})" class="btn-primary" style="padding: 5px 10px;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        function verDetalle(id) {
+            alert(`Detalles del mensaje ${id}\nEsta funcionalidad se implementará en la siguiente fase.`);
+        }
+        
+        function actualizarUltimaCarga() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = 
+                `Última actualización: ${now.toLocaleTimeString()}`;
+        }
+        
+        // Actualizar cada 30 segundos
+        setInterval(cargarMensajes, 30000);
+    </script>
 </body>
 </html>
