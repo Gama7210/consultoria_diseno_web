@@ -1,11 +1,11 @@
 /* Variables y Reset */
 :root {
-    --primary: #4a6ee0;
+    --primary: #6786ec;
     --secondary: #6c63ff;
     --dark: #2d3748;
     --light: #f8f9fa;
     --success: #10b981;
-    --danger: #ef4444;
+    --danger: #b63535;
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
 }
@@ -261,7 +261,7 @@ body {
     border: 1px solid #fecaca;
 }
 
-/* Footer */
+
 footer {
     background: var(--dark);
     color: white;
