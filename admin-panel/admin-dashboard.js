@@ -7,12 +7,15 @@ class AdminDashboard {
         this.mensajes = [];
         this.user = null;
         this.chart = null;
+        this.analyticsChart = null;
         this.filterType = 'all';
         this.currentMessageId = null;
+        this.currentSection = 'dashboard';
         this.settings = {
             notifyNewMessages: true,
             notifyErrors: true,
-            autoRefresh: true
+            autoRefresh: true,
+            darkMode: false
         };
         
         this.init();
@@ -70,7 +73,6 @@ class AdminDashboard {
             this.user = JSON.parse(userData);
             
             // Verificar token con el servidor (simulado por ahora)
-            // En producción, esto haría una petición al backend
             const isValidToken = await this.verifyToken(token);
             
             if (!isValidToken) {
@@ -99,16 +101,6 @@ class AdminDashboard {
             // En producción, esto sería una petición real al backend
             // Por ahora, simular una verificación exitosa
             return true;
-            
-            // Código real para producción:
-            /*
-            const response = await fetch('/api/auth/verify', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            return response.ok;
-            */
         } catch (error) {
             console.error('Error verificando token:', error);
             return false;
@@ -116,7 +108,7 @@ class AdminDashboard {
     }
     
     updateUserInfo() {
-        const userNameElements = document.querySelectorAll('#userName, #welcomeName');
+        const userNameElements = document.querySelectorAll('#userName, #welcomeName, #currentUsername');
         const userAvatar = document.getElementById('userAvatar');
         
         if (this.user) {
@@ -134,9 +126,6 @@ class AdminDashboard {
         try {
             console.log(`Cargando datos, página ${page}...`);
             
-            // En producción, esto cargaría datos reales del servidor
-            // Por ahora, usar datos de ejemplo
-            
             // Simular carga con timeout
             await new Promise(resolve => setTimeout(resolve, 500));
             
@@ -148,6 +137,11 @@ class AdminDashboard {
             
             this.renderMensajes();
             this.renderPagination();
+            
+            // Actualizar analíticas si está en la sección correspondiente
+            if (this.currentSection === 'analytics') {
+                this.updateAnalyticsChart();
+            }
             
             return true;
             
@@ -277,12 +271,12 @@ class AdminDashboard {
                 datasets: [{
                     label: 'Mensajes por día',
                     data: counts,
-                    borderColor: '#6786ec',
-                    backgroundColor: 'rgba(103, 134, 236, 0.1)',
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#6786ec',
+                    pointBackgroundColor: '#4f46e5',
                     pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
                     pointRadius: 6,
@@ -300,7 +294,7 @@ class AdminDashboard {
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         titleColor: '#ffffff',
                         bodyColor: '#ffffff',
-                        borderColor: '#6786ec',
+                        borderColor: '#4f46e5',
                         borderWidth: 1,
                         cornerRadius: 6,
                         displayColors: false
@@ -326,9 +320,72 @@ class AdminDashboard {
         });
     }
     
+    updateAnalyticsChart() {
+        const ctx = document.getElementById('analyticsChart');
+        if (!ctx) return;
+        
+        // Datos de ejemplo para analíticas
+        const labels = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        const visits = [120, 190, 300, 500, 200, 300, 450];
+        const pageviews = [240, 380, 600, 1000, 400, 600, 900];
+        
+        // Destruir gráfico anterior si existe
+        if (this.analyticsChart) {
+            this.analyticsChart.destroy();
+        }
+        
+        // Crear nuevo gráfico
+        this.analyticsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Visitas',
+                        data: visits,
+                        backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                        borderColor: '#4f46e5',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Páginas vistas',
+                        data: pageviews,
+                        backgroundColor: 'rgba(124, 58, 237, 0.7)',
+                        borderColor: '#7c3aed',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
     renderMensajes() {
         const tbody = document.getElementById('messagesBody');
-        if (!tbody) return;
+        const allTbody = document.getElementById('allMessagesBody');
+        
+        if (!tbody || !allTbody) return;
         
         // Aplicar filtros
         let mensajesFiltrados = this.mensajes;
@@ -342,7 +399,15 @@ class AdminDashboard {
         const endIndex = startIndex + this.itemsPerPage;
         const mensajesPagina = mensajesFiltrados.slice(startIndex, endIndex);
         
-        if (mensajesPagina.length === 0) {
+        // Renderizar para dashboard
+        this.renderMensajesTable(tbody, mensajesPagina);
+        
+        // Renderizar para sección de mensajes (todos)
+        this.renderMensajesTable(allTbody, this.mensajes.slice(0, 15));
+    }
+    
+    renderMensajesTable(tbody, mensajes) {
+        if (mensajes.length === 0) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="6">
@@ -361,7 +426,7 @@ class AdminDashboard {
         
         let html = '';
         
-        mensajesPagina.forEach(mensaje => {
+        mensajes.forEach(mensaje => {
             const fecha = new Date(mensaje.fecha).toLocaleDateString('es-ES', {
                 day: '2-digit',
                 month: 'short',
@@ -454,6 +519,107 @@ class AdminDashboard {
         
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    changeSection(section) {
+        // Remover clase active de todas las secciones
+        document.querySelectorAll('.section-content').forEach(s => {
+            s.classList.remove('active');
+        });
+        
+        // Remover clase active de todos los items del sidebar
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Agregar clase active a la sección seleccionada
+        const sectionElement = document.getElementById(`${section}Section`);
+        if (sectionElement) {
+            sectionElement.classList.add('active');
+        }
+        
+        // Agregar clase active al item del sidebar
+        const navItem = document.querySelector(`.nav-item[data-section="${section}"]`);
+        if (navItem) {
+            navItem.classList.add('active');
+        }
+        
+        // Actualizar título de la página
+        this.updatePageTitle(section);
+        
+        // Actualizar funcionalidades específicas de la sección
+        this.updateSectionFunctionality(section);
+        
+        // Guardar sección actual
+        this.currentSection = section;
+    }
+    
+    updatePageTitle(section) {
+        const titles = {
+            dashboard: 'Dashboard',
+            messages: 'Mensajes',
+            projects: 'Proyectos',
+            analytics: 'Analíticas',
+            users: 'Usuarios',
+            settings: 'Configuración'
+        };
+        
+        const descriptions = {
+            dashboard: 'Bienvenido al panel de administración de RivGam Digital Studio',
+            messages: 'Gestiona todos los mensajes recibidos de los clientes',
+            projects: 'Administra los proyectos del portafolio',
+            analytics: 'Analiza las estadísticas del sitio web',
+            users: 'Gestiona los usuarios del sistema',
+            settings: 'Configura las preferencias del panel de administración'
+        };
+        
+        const titleElement = document.getElementById('pageTitle');
+        const descriptionElement = document.getElementById('pageDescription');
+        const searchContainer = document.getElementById('searchContainer');
+        
+        if (titleElement) titleElement.textContent = titles[section] || 'Dashboard';
+        if (descriptionElement) descriptionElement.textContent = descriptions[section] || '';
+        
+        // Actualizar placeholder del buscador según la sección
+        if (searchContainer) {
+            const searchInput = searchContainer.querySelector('input');
+            if (searchInput) {
+                const placeholders = {
+                    dashboard: 'Buscar en el dashboard...',
+                    messages: 'Buscar mensajes...',
+                    projects: 'Buscar proyectos...',
+                    analytics: 'Buscar en analíticas...',
+                    users: 'Buscar usuarios...',
+                    settings: 'Buscar en configuración...'
+                };
+                searchInput.placeholder = placeholders[section] || 'Buscar...';
+            }
+        }
+    }
+    
+    updateSectionFunctionality(section) {
+        // Actualizar funcionalidades específicas de cada sección
+        switch (section) {
+            case 'analytics':
+                this.updateAnalyticsChart();
+                break;
+            case 'messages':
+                // Cargar todos los mensajes
+                this.renderMensajesTable(document.getElementById('allMessagesBody'), this.mensajes.slice(0, 15));
+                break;
+            case 'settings':
+                // Cargar configuración actual
+                this.loadCurrentSettings();
+                break;
+        }
+    }
+    
+    loadCurrentSettings() {
+        // Cargar configuración actual en los controles
+        document.getElementById('notifyNewMessages').checked = this.settings.notifyNewMessages;
+        document.getElementById('notifyErrors').checked = this.settings.notifyErrors;
+        document.getElementById('autoRefresh').checked = this.settings.autoRefresh;
+        document.getElementById('darkMode').checked = this.settings.darkMode;
     }
     
     async verDetalle(id) {
@@ -747,6 +913,23 @@ class AdminDashboard {
             });
         }
         
+        // Navegación del sidebar
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = item.getAttribute('data-section');
+                if (section) {
+                    this.changeSection(section);
+                    
+                    // Cerrar sidebar en móvil
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('active');
+                        overlay.classList.remove('active');
+                    }
+                }
+            });
+        });
+        
         // Logout
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
@@ -827,21 +1010,62 @@ class AdminDashboard {
             });
         }
         
+        // Reply modal close
+        const replyModalClose = document.getElementById('replyModalClose');
+        if (replyModalClose) {
+            replyModalClose.addEventListener('click', () => {
+                this.closeReplyModal();
+            });
+        }
+        
         // Window resize (para cerrar sidebar en móvil)
         window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1200) {
+            if (window.innerWidth >= 768) {
                 sidebar.classList.remove('active');
                 if (overlay) overlay.classList.remove('active');
             }
         });
+        
+        // Configuración - toggle switches
+        document.getElementById('notifyNewMessages')?.addEventListener('change', (e) => {
+            this.settings.notifyNewMessages = e.target.checked;
+            this.saveSettings();
+        });
+        
+        document.getElementById('notifyErrors')?.addEventListener('change', (e) => {
+            this.settings.notifyErrors = e.target.checked;
+            this.saveSettings();
+        });
+        
+        document.getElementById('autoRefresh')?.addEventListener('change', (e) => {
+            this.settings.autoRefresh = e.target.checked;
+            this.saveSettings();
+            
+            if (this.settings.autoRefresh) {
+                this.setupAutoRefresh();
+            }
+        });
+        
+        document.getElementById('darkMode')?.addEventListener('change', (e) => {
+            this.settings.darkMode = e.target.checked;
+            this.saveSettings();
+            this.toggleDarkMode();
+        });
     }
     
     setupAutoRefresh() {
-        setInterval(() => {
-            this.loadData(this.currentPage);
-            this.updateStats();
-            console.log('Actualización automática ejecutada');
-        }, 30000); // 30 segundos
+        // Limpiar intervalos anteriores
+        if (this.autoRefreshInterval) {
+            clearInterval(this.autoRefreshInterval);
+        }
+        
+        if (this.settings.autoRefresh) {
+            this.autoRefreshInterval = setInterval(() => {
+                this.loadData(this.currentPage);
+                this.updateStats();
+                console.log('Actualización automática ejecutada');
+            }, 30000); // 30 segundos
+        }
     }
     
     updateLastUpdate() {
@@ -885,20 +1109,32 @@ class AdminDashboard {
         const savedSettings = localStorage.getItem('rivgamDashboardSettings');
         if (savedSettings) {
             this.settings = JSON.parse(savedSettings);
+            
+            // Aplicar modo oscuro si está activado
+            if (this.settings.darkMode) {
+                this.toggleDarkMode();
+            }
         }
     }
     
     saveSettings() {
         localStorage.setItem('rivgamDashboardSettings', JSON.stringify(this.settings));
         this.showNotification('Configuración guardada correctamente', 'success');
-        this.closeSettingsModal();
     }
     
-    showSettings() {
+    toggleDarkMode() {
+        if (this.settings.darkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
+    
+    showSettingsModal() {
         // Cargar valores actuales
-        document.getElementById('notifyNewMessages').checked = this.settings.notifyNewMessages;
-        document.getElementById('notifyErrors').checked = this.settings.notifyErrors;
-        document.getElementById('autoRefresh').checked = this.settings.autoRefresh;
+        document.getElementById('notifyNewMessagesModal').checked = this.settings.notifyNewMessages;
+        document.getElementById('notifyErrorsModal').checked = this.settings.notifyErrors;
+        document.getElementById('autoRefreshModal').checked = this.settings.autoRefresh;
         
         // Mostrar modal
         document.getElementById('settingsModal').classList.add('active');
@@ -927,7 +1163,7 @@ function showHelp() {
           '1. Dashboard: Resumen general de estadísticas\n' +
           '2. Mensajes: Gestiona todos los mensajes recibidos\n' +
           '3. Proyectos: Administra los proyectos del portafolio\n' +
-          '4. Analíticas: Ver estadísticas detalladas\n' +
+          '4. Analíticas: Ver estadísticas detalladas del sitio\n' +
           '5. Usuarios: Gestiona usuarios del sistema\n' +
           '6. Configuración: Ajustes del panel de control\n\n' +
           'Para más ayuda, contacta al desarrollador.');
@@ -948,10 +1184,69 @@ function exportData() {
     }
 }
 
-function showSettings() {
+function exportMessages() {
     if (window.dashboard) {
-        window.dashboard.showSettings();
+        window.dashboard.exportData();
     }
+}
+
+function showSettingsModal() {
+    if (window.dashboard) {
+        window.dashboard.showSettingsModal();
+    }
+}
+
+function closeSettingsModal() {
+    if (window.dashboard) {
+        window.dashboard.closeSettingsModal();
+    }
+}
+
+function saveSettings() {
+    if (window.dashboard) {
+        const notifyNewMessages = document.getElementById('notifyNewMessagesModal').checked;
+        const notifyErrors = document.getElementById('notifyErrorsModal').checked;
+        const autoRefresh = document.getElementById('autoRefreshModal').checked;
+        
+        window.dashboard.settings.notifyNewMessages = notifyNewMessages;
+        window.dashboard.settings.notifyErrors = notifyErrors;
+        window.dashboard.settings.autoRefresh = autoRefresh;
+        
+        window.dashboard.saveSettings();
+        window.dashboard.closeSettingsModal();
+    }
+}
+
+function addProject() {
+    alert('Funcionalidad para agregar proyectos - Próximamente');
+}
+
+function addUser() {
+    alert('Funcionalidad para agregar usuarios - Próximamente');
+}
+
+function changeUsername() {
+    const newUsername = prompt('Ingresa el nuevo nombre de usuario:');
+    if (newUsername && newUsername.trim() !== '') {
+        // Actualizar en localStorage
+        const userData = localStorage.getItem('adminUser');
+        if (userData) {
+            const user = JSON.parse(userData);
+            user.usuario = newUsername.trim();
+            localStorage.setItem('adminUser', JSON.stringify(user));
+            
+            // Actualizar UI
+            if (window.dashboard) {
+                window.dashboard.user = user;
+                window.dashboard.updateUserInfo();
+                alert('Nombre de usuario actualizado correctamente');
+            }
+        }
+    }
+}
+
+function changePassword() {
+    alert('Funcionalidad para cambiar contraseña - Próximamente');
 }
 
 // Inicializar dashboard globalmente

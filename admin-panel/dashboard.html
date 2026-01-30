@@ -7,49 +7,6 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
-    <style>
-        /* Estilos adicionales específicos del dashboard */
-        .hamburger {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--dark);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-        }
-        
-        .hamburger:hover {
-            background: var(--light-gray);
-        }
-        
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 99;
-            display: none;
-        }
-        
-        .overlay.active {
-            display: block;
-        }
-        
-        @media (max-width: 1200px) {
-            .hamburger {
-                display: block;
-            }
-            
-            .topbar-actions {
-                gap: 0.75rem;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="dashboard-layout">
@@ -66,33 +23,33 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.html" class="nav-item active">
+                <a href="#" class="nav-item active" data-section="dashboard">
                     <i class="fas fa-tachometer-alt"></i>
                     <span class="nav-label">Dashboard</span>
                 </a>
                 
-                <a href="messages.html" class="nav-item">
+                <a href="#" class="nav-item" data-section="messages">
                     <i class="fas fa-envelope"></i>
                     <span class="nav-label">Mensajes</span>
                     <span class="nav-badge" id="pendingCount">0</span>
                 </a>
                 
-                <a href="projects.html" class="nav-item">
+                <a href="#" class="nav-item" data-section="projects">
                     <i class="fas fa-briefcase"></i>
                     <span class="nav-label">Proyectos</span>
                 </a>
                 
-                <a href="analytics.html" class="nav-item">
+                <a href="#" class="nav-item" data-section="analytics">
                     <i class="fas fa-chart-bar"></i>
                     <span class="nav-label">Analíticas</span>
                 </a>
                 
-                <a href="users.html" class="nav-item">
+                <a href="#" class="nav-item" data-section="users">
                     <i class="fas fa-users"></i>
                     <span class="nav-label">Usuarios</span>
                 </a>
                 
-                <a href="settings.html" class="nav-item">
+                <a href="#" class="nav-item" data-section="settings">
                     <i class="fas fa-cog"></i>
                     <span class="nav-label">Configuración</span>
                 </a>
@@ -121,14 +78,14 @@
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="page-title">
-                        <h1>Dashboard</h1>
-                        <p>Bienvenido al panel de administración de RivGam Digital Studio</p>
+                        <h1 id="pageTitle">Dashboard</h1>
+                        <p id="pageDescription">Bienvenido al panel de administración de RivGam Digital Studio</p>
                     </div>
                 </div>
                 
                 <div class="topbar-actions">
-                    <div class="search-box">
-                        <input type="text" placeholder="Buscar mensajes..." id="searchInput">
+                    <div class="search-box" id="searchContainer">
+                        <input type="text" placeholder="Buscar..." id="searchInput">
                         <i class="fas fa-search"></i>
                     </div>
                     <button class="btn btn-primary btn-sm" id="refreshBtn">
@@ -137,182 +94,536 @@
                 </div>
             </header>
             
-            <!-- Welcome Banner -->
-            <div class="welcome-banner">
-                <div class="welcome-content">
-                    <h2>¡Hola, <span id="welcomeName">Administrador</span>!</h2>
-                    <p>Gestiona todos los mensajes de contacto, revisa estadísticas y mantén tu sitio web actualizado desde este panel.</p>
-                    <button class="btn btn-light btn-sm" onclick="showHelp()">
-                        <i class="fas fa-question-circle"></i> Ayuda rápida
-                    </button>
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="section-content active">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="welcome-content">
+                        <h2>¡Hola, <span id="welcomeName">Administrador</span>!</h2>
+                        <p>Gestiona todos los mensajes de contacto, revisa estadísticas y mantén tu sitio web actualizado desde este panel.</p>
+                        <button class="btn btn-light btn-sm" onclick="showHelp()">
+                            <i class="fas fa-question-circle"></i> Ayuda rápida
+                        </button>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon total">
-                            <i class="fas fa-envelope"></i>
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon total">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <span class="stat-trend trend-up" id="totalTrend">
+                                <i class="fas fa-arrow-up"></i> 12%
+                            </span>
                         </div>
-                        <span class="stat-trend trend-up" id="totalTrend">
-                            <i class="fas fa-arrow-up"></i> 12%
-                        </span>
+                        <div class="stat-value" id="totalMensajes">0</div>
+                        <div class="stat-label">Total de Mensajes</div>
                     </div>
-                    <div class="stat-value" id="totalMensajes">0</div>
-                    <div class="stat-label">Total de Mensajes</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon respondidos">
-                            <i class="fas fa-check-circle"></i>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon respondidos">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <span class="stat-trend trend-up" id="respondidosTrend">
+                                <i class="fas fa-arrow-up"></i> 8%
+                            </span>
                         </div>
-                        <span class="stat-trend trend-up" id="respondidosTrend">
-                            <i class="fas fa-arrow-up"></i> 8%
-                        </span>
+                        <div class="stat-value" id="mensajesRespondidos">0</div>
+                        <div class="stat-label">Respondidos</div>
                     </div>
-                    <div class="stat-value" id="mensajesRespondidos">0</div>
-                    <div class="stat-label">Respondidos</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon pendientes">
-                            <i class="fas fa-clock"></i>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon pendientes">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <span class="stat-trend trend-down" id="pendientesTrend">
+                                <i class="fas fa-arrow-down"></i> 4%
+                            </span>
                         </div>
-                        <span class="stat-trend trend-down" id="pendientesTrend">
-                            <i class="fas fa-arrow-down"></i> 4%
-                        </span>
+                        <div class="stat-value" id="mensajesPendientes">0</div>
+                        <div class="stat-label">Pendientes</div>
                     </div>
-                    <div class="stat-value" id="mensajesPendientes">0</div>
-                    <div class="stat-label">Pendientes</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon hoy">
-                            <i class="fas fa-calendar-day"></i>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon hoy">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <span class="stat-trend trend-up" id="hoyTrend">
+                                <i class="fas fa-arrow-up"></i> 24%
+                            </span>
                         </div>
-                        <span class="stat-trend trend-up" id="hoyTrend">
-                            <i class="fas fa-arrow-up"></i> 24%
-                        </span>
-                    </div>
-                    <div class="stat-value" id="mensajesHoy">0</div>
-                    <div class="stat-label">Mensajes Hoy</div>
-                </div>
-            </div>
-            
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <div class="action-card" onclick="composeEmail()">
-                    <div class="action-icon email">
-                        <i class="fas fa-paper-plane"></i>
-                    </div>
-                    <div class="action-info">
-                        <h3>Enviar Email</h3>
-                        <p>Envía un correo masivo a tus contactos</p>
+                        <div class="stat-value" id="mensajesHoy">0</div>
+                        <div class="stat-label">Mensajes Hoy</div>
                     </div>
                 </div>
                 
-                <div class="action-card" onclick="exportData()">
-                    <div class="action-icon export">
-                        <i class="fas fa-file-export"></i>
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="action-card" onclick="composeEmail()">
+                        <div class="action-icon email">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="action-info">
+                            <h3>Enviar Email</h3>
+                            <p>Envía un correo masivo a tus contactos</p>
+                        </div>
                     </div>
-                    <div class="action-info">
-                        <h3>Exportar Datos</h3>
-                        <p>Descarga todos los mensajes en CSV</p>
+                    
+                    <div class="action-card" onclick="exportData()">
+                        <div class="action-icon export">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <div class="action-info">
+                            <h3>Exportar Datos</h3>
+                            <p>Descarga todos los mensajes en CSV</p>
+                        </div>
+                    </div>
+                    
+                    <div class="action-card" onclick="showSettingsModal()">
+                        <div class="action-icon settings">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <div class="action-info">
+                            <h3>Configuración</h3>
+                            <p>Configura tu panel de administración</p>
+                        </div>
+                    </div>
+                    
+                    <div class="action-card" onclick="showHelp()">
+                        <div class="action-icon help">
+                            <i class="fas fa-life-ring"></i>
+                        </div>
+                        <div class="action-info">
+                            <h3>Ayuda</h3>
+                            <p>Guía de uso y soporte</p>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="action-card" onclick="showSettings()">
-                    <div class="action-icon settings">
-                        <i class="fas fa-sliders-h"></i>
+                <!-- Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">Actividad de Mensajes</div>
+                        <div class="chart-period">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Últimos 7 días</span>
+                        </div>
                     </div>
-                    <div class="action-info">
-                        <h3>Configuración</h3>
-                        <p>Configura tu panel de administración</p>
+                    <div class="chart-wrapper">
+                        <canvas id="messagesChart"></canvas>
                     </div>
                 </div>
                 
-                <div class="action-card" onclick="showHelp()">
-                    <div class="action-icon help">
-                        <i class="fas fa-life-ring"></i>
+                <!-- Messages Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>Mensajes Recientes</h2>
+                        <div class="table-actions">
+                            <button class="btn btn-outline btn-sm" id="filterAll">
+                                <i class="fas fa-list"></i> Todos
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="filterPending">
+                                <i class="fas fa-clock"></i> Pendientes
+                            </button>
+                            <button class="btn btn-primary btn-sm" id="exportBtn">
+                                <i class="fas fa-download"></i> Exportar
+                            </button>
+                        </div>
                     </div>
-                    <div class="action-info">
-                        <h3>Ayuda</h3>
-                        <p>Guía de uso y soporte</p>
+                    
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Asunto</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="messagesBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 3rem;">
+                                        <div class="loading">
+                                            <div class="spinner"></div>
+                                            <p>Cargando mensajes...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="pagination" id="pagination">
+                        <!-- Paginación generada dinámicamente -->
                     </div>
                 </div>
-            </div>
+                
+                <!-- Last Update -->
+                <div style="text-align: center; margin-top: 2rem; color: #64748b; font-size: 0.875rem;">
+                    <p id="lastUpdate">
+                        <i class="fas fa-clock"></i> Última actualización: <span id="updateTime">--:--:--</span>
+                    </p>
+                </div>
+            </section>
             
-            <!-- Chart -->
-            <div class="chart-container">
-                <div class="chart-header">
-                    <div class="chart-title">Actividad de Mensajes</div>
-                    <div class="chart-period">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Últimos 7 días</span>
+            <!-- Messages Section -->
+            <section id="messagesSection" class="section-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>Todos los Mensajes</h2>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <input type="text" placeholder="Buscar mensajes..." id="messagesSearch">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <button class="btn btn-outline btn-sm" id="messagesFilterAll">
+                                <i class="fas fa-list"></i> Todos
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="messagesFilterPending">
+                                <i class="fas fa-clock"></i> Pendientes
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="exportMessages()">
+                                <i class="fas fa-download"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Asunto</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allMessagesBody">
+                                <!-- Mensajes cargados dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="pagination" id="messagesPagination">
+                        <!-- Paginación generada dinámicamente -->
                     </div>
                 </div>
-                <div class="chart-wrapper">
-                    <canvas id="messagesChart"></canvas>
-                </div>
-            </div>
+            </section>
             
-            <!-- Messages Table -->
-            <div class="table-container">
-                <div class="table-header">
-                    <h2>Mensajes Recientes</h2>
+            <!-- Projects Section -->
+            <section id="projectsSection" class="section-content">
+                <div class="table-header" style="margin-bottom: 2rem;">
+                    <h2>Proyectos</h2>
                     <div class="table-actions">
-                        <button class="btn btn-outline btn-sm" id="filterAll">
-                            <i class="fas fa-list"></i> Todos
-                        </button>
-                        <button class="btn btn-outline btn-sm" id="filterPending">
-                            <i class="fas fa-clock"></i> Pendientes
-                        </button>
-                        <button class="btn btn-primary btn-sm" id="exportBtn">
-                            <i class="fas fa-download"></i> Exportar
+                        <button class="btn btn-primary btn-sm" onclick="addProject()">
+                            <i class="fas fa-plus"></i> Nuevo Proyecto
                         </button>
                     </div>
                 </div>
                 
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Cliente</th>
-                                <th>Asunto</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="messagesBody">
-                            <tr>
-                                <td colspan="6" style="text-align: center; padding: 3rem;">
-                                    <div class="loading">
-                                        <div class="spinner"></div>
-                                        <p>Cargando mensajes...</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <div class="project-image">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="project-info">
+                            <h3>Tienda Online Moda</h3>
+                            <p>E-commerce completo con sistema de pagos y gestión de inventario.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">E-commerce</span>
+                                <span class="project-tag">React</span>
+                                <span class="project-tag">Node.js</span>
+                            </div>
+                            <div class="project-status">
+                                <div class="status-indicator completed">
+                                    <div class="status-dot completed"></div>
+                                    <span>Completado</span>
+                                </div>
+                                <span>15 Ene 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card">
+                        <div class="project-image">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="project-info">
+                            <h3>Portal Educativo</h3>
+                            <p>Plataforma de aprendizaje online con aulas virtuales y sistema de evaluaciones.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">Educación</span>
+                                <span class="project-tag">Laravel</span>
+                                <span class="project-tag">Vue.js</span>
+                            </div>
+                            <div class="project-status">
+                                <div class="status-indicator in-progress">
+                                    <div class="status-dot in-progress"></div>
+                                    <span>En Progreso</span>
+                                </div>
+                                <span>28 Feb 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card">
+                        <div class="project-image">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="project-info">
+                            <h3>App Delivery</h3>
+                            <p>Aplicación móvil para servicio de delivery con seguimiento en tiempo real.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">Mobile</span>
+                                <span class="project-tag">React Native</span>
+                                <span class="project-tag">Firebase</span>
+                            </div>
+                            <div class="project-status">
+                                <div class="status-indicator pending">
+                                    <div class="status-dot pending"></div>
+                                    <span>Pendiente</span>
+                                </div>
+                                <span>15 Mar 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Analytics Section -->
+            <section id="analyticsSection" class="section-content">
+                <div class="analytics-grid">
+                    <div class="metric-card">
+                        <h3>Visitantes Totales</h3>
+                        <div class="metric-value">2,847</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>12.5% desde el mes pasado</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <h3>Tasa de Rebote</h3>
+                        <div class="metric-value">32.4%</div>
+                        <div class="metric-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>2.3% desde el mes pasado</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <h3>Tiempo en Sitio</h3>
+                        <div class="metric-value">3m 24s</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>18.7% desde el mes pasado</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <h3>Páginas por Visita</h3>
+                        <div class="metric-value">4.2</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>8.9% desde el mes pasado</span>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="pagination" id="pagination">
-                    <!-- Paginación generada dinámicamente -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">Tráfico del Sitio</div>
+                        <div class="chart-period">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Últimos 30 días</span>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
                 </div>
-            </div>
+                
+                <div class="traffic-sources">
+                    <h3>Fuentes de Tráfico</h3>
+                    <div class="traffic-item">
+                        <div class="traffic-source">
+                            <div class="traffic-icon google">G</div>
+                            <span>Google</span>
+                        </div>
+                        <div class="traffic-stats">
+                            <div class="traffic-percentage">42.3%</div>
+                            <div class="traffic-visits">1,204 visitas</div>
+                        </div>
+                    </div>
+                    <div class="traffic-item">
+                        <div class="traffic-source">
+                            <div class="traffic-icon direct">D</div>
+                            <span>Directo</span>
+                        </div>
+                        <div class="traffic-stats">
+                            <div class="traffic-percentage">28.7%</div>
+                            <div class="traffic-visits">817 visitas</div>
+                        </div>
+                    </div>
+                    <div class="traffic-item">
+                        <div class="traffic-source">
+                            <div class="traffic-icon social">S</div>
+                            <span>Redes Sociales</span>
+                        </div>
+                        <div class="traffic-stats">
+                            <div class="traffic-percentage">18.4%</div>
+                            <div class="traffic-visits">524 visitas</div>
+                        </div>
+                    </div>
+                    <div class="traffic-item">
+                        <div class="traffic-source">
+                            <div class="traffic-icon referral">R</div>
+                            <span>Referidos</span>
+                        </div>
+                        <div class="traffic-stats">
+                            <div class="traffic-percentage">10.6%</div>
+                            <div class="traffic-visits">302 visitas</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             
-            <!-- Last Update -->
-            <div style="text-align: center; margin-top: 2rem; color: #64748b; font-size: 0.875rem;">
-                <p id="lastUpdate">
-                    <i class="fas fa-clock"></i> Última actualización: <span id="updateTime">--:--:--</span>
-                </p>
-            </div>
+            <!-- Users Section -->
+            <section id="usersSection" class="section-content">
+                <div class="table-header" style="margin-bottom: 2rem;">
+                    <h2>Usuarios del Sistema</h2>
+                    <div class="table-actions">
+                        <button class="btn btn-primary btn-sm" onclick="addUser()">
+                            <i class="fas fa-plus"></i> Nuevo Usuario
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="users-list">
+                    <div class="user-row">
+                        <div class="user-avatar-sm" style="background: linear-gradient(135deg, #4f46e5, #7c3aed);">A</div>
+                        <div class="user-info-sm">
+                            <div class="user-name-sm">Administrador</div>
+                            <div class="user-email-sm">admin@rivgam.com</div>
+                        </div>
+                        <span class="user-role-sm">Super Admin</span>
+                        <div class="user-actions-sm">
+                            <button class="btn-icon btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="user-row">
+                        <div class="user-avatar-sm" style="background: linear-gradient(135deg, #10b981, #059669);">M</div>
+                        <div class="user-info-sm">
+                            <div class="user-name-sm">María García</div>
+                            <div class="user-email-sm">maria@rivgam.com</div>
+                        </div>
+                        <span class="user-role-sm">Editor</span>
+                        <div class="user-actions-sm">
+                            <button class="btn-icon btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="user-row">
+                        <div class="user-avatar-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);">C</div>
+                        <div class="user-info-sm">
+                            <div class="user-name-sm">Carlos López</div>
+                            <div class="user-email-sm">carlos@rivgam.com</div>
+                        </div>
+                        <span class="user-role-sm">Moderador</span>
+                        <div class="user-actions-sm">
+                            <button class="btn-icon btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Settings Section -->
+            <section id="settingsSection" class="section-content">
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3>Notificaciones</h3>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Notificar nuevos mensajes</div>
+                                <div class="setting-description">Recibir notificaciones cuando lleguen nuevos mensajes</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="notifyNewMessages" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Notificar errores</div>
+                                <div class="setting-description">Recibir notificaciones de errores del sistema</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="notifyErrors" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3>Sistema</h3>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Actualización automática</div>
+                                <div class="setting-description">Actualizar datos automáticamente cada 30 segundos</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="autoRefresh" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Modo oscuro</div>
+                                <div class="setting-description">Cambiar a tema oscuro</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="darkMode">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3>Información de la Cuenta</h3>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Nombre de usuario</div>
+                                <div class="setting-description" id="currentUsername">Administrador</div>
+                            </div>
+                            <button class="btn btn-outline btn-sm" onclick="changeUsername()">Cambiar</button>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Contraseña</div>
+                                <div class="setting-description">Último cambio: 15/01/2024</div>
+                            </div>
+                            <button class="btn btn-outline btn-sm" onclick="changePassword()">Cambiar</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
     
@@ -346,15 +657,15 @@
                 <form id="replyForm">
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Para:</label>
-                        <input type="email" id="replyTo" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray); border-radius: var(--radius-sm);" readonly>
+                        <input type="email" id="replyTo" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;" readonly>
                     </div>
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Asunto:</label>
-                        <input type="text" id="replySubject" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray); border-radius: var(--radius-sm);">
+                        <input type="text" id="replySubject" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;">
                     </div>
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Mensaje:</label>
-                        <textarea id="replyMessage" rows="6" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray); border-radius: var(--radius-sm); font-family: 'Poppins', sans-serif;"></textarea>
+                        <textarea id="replyMessage" rows="6" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif;"></textarea>
                     </div>
                     <div style="margin-bottom: 1rem;">
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
@@ -377,30 +688,24 @@
     <div class="modal-overlay" id="settingsModal">
         <div class="modal" style="max-width: 500px;">
             <div class="modal-header">
-                <h3>Configuración</h3>
+                <h3>Configuración Avanzada</h3>
                 <button class="modal-close" onclick="closeSettingsModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="settingsForm">
                     <div style="margin-bottom: 1.5rem;">
-                        <h4 style="margin-bottom: 1rem; color: var(--dark);">Notificaciones</h4>
+                        <h4 style="margin-bottom: 1rem; color: var(--dark);">Configuración del Sistema</h4>
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                <input type="checkbox" id="notifyNewMessages" checked>
+                                <input type="checkbox" id="notifyNewMessagesModal" checked>
                                 <span>Notificar nuevos mensajes</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                <input type="checkbox" id="notifyErrors" checked>
+                                <input type="checkbox" id="notifyErrorsModal" checked>
                                 <span>Notificar errores del sistema</span>
                             </label>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 1.5rem;">
-                        <h4 style="margin-bottom: 1rem; color: var(--dark);">Actualizaciones</h4>
-                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                <input type="checkbox" id="autoRefresh" checked>
+                                <input type="checkbox" id="autoRefreshModal" checked>
                                 <span>Actualización automática cada 30 segundos</span>
                             </label>
                         </div>
