@@ -26,7 +26,6 @@
             50% { transform: scale(1.1); }
         }
         
-        /* Error animation */
         .error-animation {
             animation: shake 0.5s ease-in-out;
         }
@@ -100,12 +99,11 @@
             const messageText = document.getElementById('messageText');
             const submitBtn = this.querySelector('button[type="submit"]');
             
-            // Mostrar loading en el botón
+    
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Verificando...</span>';
             submitBtn.disabled = true;
             
-            // Ocultar mensaje anterior
             messageDiv.style.display = 'none';
             
             try {
@@ -125,37 +123,37 @@
                 console.log('Datos del servidor:', data);
                 
                 if (data.success) {
-                    // IMPORTANTE: Guardar datos de usuario Y token
+                    // generar token de usuario 
                     localStorage.setItem('adminUser', JSON.stringify(data.user));
                     localStorage.setItem('adminToken', 'rivgam-auth-' + Date.now());
                     localStorage.setItem('lastLogin', new Date().toISOString());
                     
-                    // Mostrar mensaje de éxito
+                 
                     messageText.textContent = '✓ Login exitoso. Redirigiendo...';
                     messageDiv.className = 'alert alert-success';
                     messageDiv.style.display = 'flex';
                     
-                    // Animación de éxito
+                    
                     submitBtn.innerHTML = '<i class="fas fa-check"></i><span>¡Éxito!</span>';
                     submitBtn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
                     
-                    // Redirigir después de 1.5 segundos
+                    
                     setTimeout(() => {
                         console.log('Redirigiendo a dashboard...');
                         window.location.href = '/admin/dashboard.html';
                     }, 1500);
                     
                 } else {
-                    // Mostrar error
+                   
                     messageText.textContent = data.message || '✗ Credenciales incorrectas';
                     messageDiv.className = 'alert alert-error';
                     messageDiv.style.display = 'flex';
                     
-                    // Restaurar botón
+                    
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                     
-                    // Agregar animación de error
+                    
                     this.classList.add('error-animation');
                     setTimeout(() => this.classList.remove('error-animation'), 300);
                 }
@@ -167,24 +165,22 @@
                 messageDiv.className = 'alert alert-error';
                 messageDiv.style.display = 'flex';
                 
-                // Restaurar botón
+                
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
         });
         
-        // Permitir login con Enter
         document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 document.getElementById('loginForm').dispatchEvent(new Event('submit'));
             }
         });
         
-        // Auto-focus en usuario al cargar
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usuario').focus();
             
-            // Limpiar localStorage si hay un parámetro de logout
+           
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('logout')) {
                 localStorage.clear();
