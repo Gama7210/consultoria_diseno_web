@@ -41,8 +41,12 @@
                     <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
+                    <label for="telefono">Telefono (opcional):</label>
+                    <input type="tel" id="telefono" name="telefono">
+                </div>
+                <div class="form-group">
                     <label for="asunto">Asunto:</label>
-                    <input type="text" id="asunto" name="asunto">
+                    <input type="text" id="asunto" name="asunto" required>
                 </div>
                 <div class="form-group">
                     <label for="mensaje">Mensaje:</label>
@@ -50,7 +54,7 @@
                 </div>
                 <button type="submit" class="btn">Enviar Mensaje</button>
             </form>
-            <div id="responseMessage"></div>
+            <div id="formMessage"></div>
         </div>
     </section>
 
@@ -60,6 +64,6 @@
         </div>
     </footer>
 
-    <script src="js/contacto.js"></script>
+    <script src="js/contac.js"></script>
 </body>
 </html>

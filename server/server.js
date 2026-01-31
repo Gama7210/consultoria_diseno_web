@@ -3,9 +3,28 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const db = require('./database');
+const nodemailer = require('nodemailer');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3001;
+
+// Configurar transporter de nodemailer para enviar correos
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+// Verificar conexión de email al iniciar
+transporter.verify((error, success) => {
+    if (error) {
+        console.log('⚠️  Correo no configurado:', error.message);
+    } else {
+        console.log('✅ Servidor de correo listo para enviar');
+    }
+});
 
 // Middleware
 app.use(cors());
@@ -133,12 +152,97 @@ app.post('/api/contacto', (req, res) => {
                 });
             }
             
-            console.log('Mensaje guardado con ID:', this.lastID);
+            const mensajeId = this.lastID;
+            console.log('Mensaje guardado con ID:', mensajeId);
+            
+            // Enviar correo de confirmación al usuario
+            const mailOptions = {
+                from: `"RivGam Digital Studio" <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: 'Confirmación de Recepción - RivGam Digital Studio',
+                html: `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+                            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h1>¡Gracias por contactarnos!</h1>
+                                <p>RivGam Digital Studio</p>
+                            </div>
+                            <div class="content">
+                                <h2>Hola ${nombre},</h2>
+                                <p>Hemos recibido tu mensaje con el asunto: <strong>${asunto}</strong></p>
+                                <p>Nuestro equipo de expertos revisará tu consulta y te responderá en un plazo máximo de 24 horas hábiles.</p>
+                                <p><strong>Detalles de tu mensaje:</strong></p>
+                                <blockquote style="background: white; padding: 15px; border-left: 4px solid #667eea; margin: 15px 0;">
+                                    ${mensaje}
+                                </blockquote>
+                                <p><strong>Información de contacto registrada:</strong></p>
+                                <ul>
+                                    <li>Email: ${email}</li>
+                                    ${telefono ? `<li>Teléfono: ${telefono}</li>` : ''}
+                                </ul>
+                                <p>Si necesitas hacer alguna modificación o tienes preguntas adicionales, no dudes en responder a este correo.</p>
+                                <p>Atentamente,<br><strong>Equipo RivGam Digital Studio</strong></p>
+                            </div>
+                            <div class="footer">
+                                <p>© 2026 RivGam Digital Studio. Todos los derechos reservados.</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                `,
+                text: `Hola ${nombre},\n\nHemos recibido tu mensaje con el asunto: ${asunto}\n\nNuestro equipo te responderá en un plazo máximo de 24 horas hábiles.\n\nAtentamente,\nEquipo RivGam Digital Studio`
+            };
+            
+            // Enviar correo
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error('Error al enviar correo:', error);
+                } else {
+                    console.log('Correo enviado exitosamente:', info.response);
+                }
+            });
+            
+            // Enviar notificación al administrador
+            const adminMail = {
+                from: `"Sistema RivGam" <${process.env.EMAIL_USER}>`,
+                to: process.env.EMAIL_USER,
+                subject: `Nuevo mensaje de contacto: ${asunto}`,
+                html: `
+                    <h2>Nuevo mensaje de contacto recibido</h2>
+                    <p><strong>ID:</strong> ${mensajeId}</p>
+                    <p><strong>Nombre:</strong> ${nombre}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Teléfono:</strong> ${telefono || 'No proporcionado'}</p>
+                    <p><strong>Asunto:</strong> ${asunto}</p>
+                    <p><strong>Mensaje:</strong></p>
+                    <p>${mensaje}</p>
+                    <p><strong>Fecha:</strong> ${new Date().toLocaleString()}</p>
+                `
+            };
+            
+            transporter.sendMail(adminMail, (error, info) => {
+                if (error) {
+                    console.error('Error al enviar correo al admin:', error);
+                } else {
+                    console.log('Correo al admin enviado:', info.response);
+                }
+            });
             
             res.json({ 
                 success: true, 
-                message: 'Mensaje enviado con éxito',
-                id: this.lastID 
+                message: 'Mensaje enviado con éxito. Te hemos enviado un correo de confirmación.',
+                id: mensajeId 
             });
         }
     );
