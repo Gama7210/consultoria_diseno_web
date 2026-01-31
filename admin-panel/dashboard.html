@@ -10,10 +10,9 @@
 </head>
 <body>
     <div class="dashboard-layout">
-        <!-- Overlay para móvil -->
+        <!-- adaptar a movil-->
         <div class="overlay" id="overlay"></div>
         
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="sidebar-logo">
@@ -69,9 +68,8 @@
             </div>
         </aside>
         
-        <!-- Main Content -->
+
         <main class="main-content">
-            <!-- Topbar -->
             <header class="topbar">
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <button class="hamburger" id="sidebarToggle">
@@ -94,9 +92,8 @@
                 </div>
             </header>
             
-            <!-- Dashboard Section -->
             <section id="dashboardSection" class="section-content active">
-                <!-- Welcome Banner -->
+
                 <div class="welcome-banner">
                     <div class="welcome-content">
                         <h2>¡Hola, <span id="welcomeName">Administrador</span>!</h2>
@@ -106,8 +103,7 @@
                         </button>
                     </div>
                 </div>
-                
-                <!-- Stats Grid -->
+
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-header">
@@ -162,7 +158,6 @@
                     </div>
                 </div>
                 
-                <!-- Quick Actions -->
                 <div class="quick-actions">
                     <div class="action-card" onclick="composeEmail()">
                         <div class="action-icon email">
@@ -205,7 +200,7 @@
                     </div>
                 </div>
                 
-                <!-- Chart -->
+
                 <div class="chart-container">
                     <div class="chart-header">
                         <div class="chart-title">Actividad de Mensajes</div>
@@ -219,7 +214,7 @@
                     </div>
                 </div>
                 
-                <!-- Messages Table -->
+
                 <div class="table-container">
                     <div class="table-header">
                         <h2>Mensajes Recientes</h2>
@@ -262,19 +257,18 @@
                     </div>
                     
                     <div class="pagination" id="pagination">
-                        <!-- Paginación generada dinámicamente -->
+
                     </div>
                 </div>
                 
-                <!-- Last Update -->
+
                 <div style="text-align: center; margin-top: 2rem; color: #64748b; font-size: 0.875rem;">
                     <p id="lastUpdate">
                         <i class="fas fa-clock"></i> Última actualización: <span id="updateTime">--:--:--</span>
                     </p>
                 </div>
             </section>
-            
-            <!-- Messages Section -->
+
             <section id="messagesSection" class="section-content">
                 <div class="table-container">
                     <div class="table-header">
