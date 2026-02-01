@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        // Obtener datos del formulario
         const formData = {
             nombre: document.getElementById('nombre').value,
             email: document.getElementById('email').value,
@@ -14,13 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
             mensaje: document.getElementById('mensaje').value
         };
 
-        // Validación básica
+     
         if (!formData.nombre || !formData.email || !formData.asunto || !formData.mensaje) {
             showMessage('Por favor completa todos los campos requeridos', 'error');
             return;
         }
 
-        // Enviar datos al servidor
+        
         try {
             const response = await fetch('/api/contacto', {
                 method: 'POST',

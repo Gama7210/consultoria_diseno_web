@@ -1,4 +1,3 @@
-// Funciones para login
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -39,13 +38,13 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = 'login.html';
         });
         
-        // Verificar autenticación
+        
         const token = localStorage.getItem('adminToken');
         if (!token) {
             window.location.href = 'login.html';
         } else {
             cargarMensajes();
-            setInterval(cargarMensajes, 30000); // Actualizar cada 30 segundos
+            setInterval(cargarMensajes, 30000); 
         }
     }
 });
@@ -56,7 +55,6 @@ function showLoginMessage(message, type) {
     messageDiv.style.color = type === 'error' ? 'red' : 'green';
 }
 
-// Funciones para el dashboard
 async function cargarMensajes() {
     try {
         const response = await fetch('/api/mensajes');
@@ -108,7 +106,7 @@ function mostrarMensajes(mensajes) {
 }
 
 function verDetalle(id) {
-    // Implementar vista detallada del mensaje
+    
     alert(`Ver detalles del mensaje ${id}`);
 }
 

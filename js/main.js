@@ -1,6 +1,5 @@
-// main.js - Funcionalidades generales del sitio web
 document.addEventListener('DOMContentLoaded', function() {
-    // Menú hamburguesa para móviles
+
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
     
@@ -11,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Cerrar menú al hacer clic en un enlace
+  
     const navLinks = document.querySelectorAll('.nav-menu a');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -20,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Scroll suave
+   
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -37,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Animación al hacer scroll
+  
     function checkScroll() {
         const elements = document.querySelectorAll('.service-card, .contact-wrapper');
         
@@ -51,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Efecto sticky en navbar
+ 
     window.addEventListener('scroll', function() {
         const navbar = document.querySelector('.navbar');
         if (window.scrollY > 100) {
@@ -63,10 +62,10 @@ document.addEventListener('DOMContentLoaded', function() {
         checkScroll();
     });
     
-    // Inicializar animaciones
+    
     checkScroll();
     
-    // Validación de formulario de contacto en tiempo real
+   
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         const inputs = contactForm.querySelectorAll('input, textarea');
