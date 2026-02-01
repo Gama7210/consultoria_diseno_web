@@ -1,4 +1,4 @@
-/* ===== VARIABLES Y RESET MEJORADO ===== */
+
 :root {
     --primary: #6786ec;
     --primary-dark: #4a6ee0;
@@ -61,7 +61,7 @@ body {
     padding: 0 24px;
 }
 
-/* ===== TIPOGRAFÍA MEJORADA ===== */
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     line-height: 1.2;
@@ -86,7 +86,7 @@ p {
     margin-bottom: 1.5rem;
 }
 
-/* ===== NAVEGACIÓN MEJORADA ===== */
+
 .navbar {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -228,7 +228,7 @@ p {
     transform: rotate(-45deg) translate(6px, -6px);
 }
 
-/* ===== HERO SECTION MEJORADA ===== */
+
 .hero {
     padding: 180px 0 100px;
     background: var(--gradient-primary);
@@ -329,7 +329,7 @@ p {
     filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
 }
 
-/* ===== SERVICIOS MEJORADA ===== */
+
 .services {
     padding: 120px 0;
     background: var(--light-gray);
@@ -422,7 +422,7 @@ p {
     margin-bottom: 0;
 }
 
-/* ===== PORTFOLIO NUEVA SECCIÓN ===== */
+
 .portfolio {
     padding: 120px 0;
     background: white;
@@ -536,7 +536,7 @@ p {
     font-weight: 500;
 }
 
-/* ===== NOSOTROS NUEVA SECCIÓN ===== */
+
 .about {
     padding: 120px 0;
     background: var(--light-gray);
@@ -600,7 +600,7 @@ p {
     display: block;
 }
 
-/* ===== CONTACTO MEJORADO ===== */
+
 .contact {
     padding: 120px 0;
     background: white;
@@ -735,7 +735,7 @@ p {
     border: 1px solid #fecaca;
 }
 
-/* ===== FOOTER MEJORADO ===== */
+
 footer {
     background: var(--dark);
     color: white;
@@ -797,7 +797,6 @@ footer {
     color: rgba(255, 255, 255, 0.5);
 }
 
-/* ===== ANIMACIONES ===== */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -829,7 +828,6 @@ footer {
     }
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 992px) {
     .hero .container,
     .about-content,
@@ -911,7 +909,7 @@ footer {
     }
 }
 
-/* ===== UTILIDADES ===== */
+
 .fade-in {
     animation: fadeInUp 0.8s ease-out;
 }
