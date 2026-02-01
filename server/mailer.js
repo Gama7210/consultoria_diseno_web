@@ -1,4 +1,4 @@
-// server/mailer.js
+
 const nodemailer = require('nodemailer');
 
 class Mailer {
@@ -11,7 +11,7 @@ class Mailer {
             }
         });
         
-        // Verificar configuración del transporter
+        
         this.verifyConnection();
     }
     
@@ -97,7 +97,7 @@ class Mailer {
         }
     }
     
-    // Plantilla para respuestas personalizadas
+
     getResponseTemplate(nombre, respuesta, adminNombre = 'Equipo RivGam') {
         return `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
