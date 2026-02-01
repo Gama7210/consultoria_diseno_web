@@ -1,5 +1,3 @@
-// contact.js - Manejo del formulario de contacto
-
 document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
     const formMessage = document.getElementById('formMessage');
@@ -9,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Obtener datos del formulario
+       
         const formData = {
             nombre: document.getElementById('nombre').value.trim(),
             email: document.getElementById('email').value.trim(),
@@ -18,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             mensaje: document.getElementById('mensaje').value.trim()
         };
         
-        // Validación
+       
         const errors = validateForm(formData);
         
         if (errors.length > 0) {
@@ -26,14 +24,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Mostrar loading
+        
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
         submitBtn.disabled = true;
         
         try {
-            // Enviar datos al servidor
+           
             const response = await fetch('/api/contacto', {
                 method: 'POST',
                 headers: {
@@ -48,12 +46,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 showMessage('¡Mensaje enviado con éxito! Te contactaremos pronto.', 'success');
                 contactForm.reset();
                 
-                // Resetear labels
+              
                 contactForm.querySelectorAll('.form-group').forEach(group => {
                     group.classList.remove('focused');
                 });
                 
-                // Enviar evento a Google Analytics (si existe)
+                
                 if (typeof gtag !== 'undefined') {
                     gtag('event', 'contact_form_submit', {
                         'event_category': 'Contacto',
@@ -67,13 +65,13 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
             showMessage('Error de conexión. Por favor, intenta nuevamente más tarde.', 'error');
         } finally {
-            // Restaurar botón
+          
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }
     });
     
-    // Validación en tiempo real
+   
     const inputs = contactForm.querySelectorAll('input, textarea');
     inputs.forEach(input => {
         input.addEventListener('blur', function() {
@@ -85,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Función para validar el formulario
+   
     function validateForm(data) {
         const errors = [];
         
@@ -112,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return errors;
     }
     
-    // Función para validar un campo individual
+ 
     function validateField(field) {
         const value = field.value.trim();
         let isValid = true;
@@ -164,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return isValid;
     }
     
-    // Función para mostrar error en un campo
+
     function showFieldError(field, message) {
         clearFieldError(field);
         
@@ -182,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         field.style.borderColor = 'var(--danger)';
     }
     
-    // Función para limpiar error de un campo
+ 
     function clearFieldError(field) {
         const existingError = field.parentElement.querySelector('.field-error');
         if (existingError) {
@@ -191,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
         field.style.borderColor = '';
     }
     
-    // Funciones de validación
+  
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -202,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return phoneRegex.test(phone);
     }
     
-    // Función para mostrar mensajes generales
+   
     function showMessage(message, type) {
         formMessage.innerHTML = `
             <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -213,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formMessage.className = type === 'success' ? 'message-success' : 'message-error';
         formMessage.style.display = 'block';
         
-        // Desaparecer después de 5 segundos
+  
         setTimeout(() => {
             formMessage.style.opacity = '0';
             setTimeout(() => {
@@ -223,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     }
     
-    // Animación al enviar el formulario
+   
     contactForm.addEventListener('submit', function(e) {
         const button = this.querySelector('button[type="submit"]');
         button.style.transform = 'scale(0.95)';
