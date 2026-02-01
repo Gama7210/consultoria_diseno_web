@@ -12,9 +12,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Crear tablas
+
 function inicializarTablas() {
-    // Tabla de mensajes de contacto
+    
     db.run(`CREATE TABLE IF NOT EXISTS mensajes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
@@ -27,7 +27,7 @@ function inicializarTablas() {
         respuesta TEXT
     )`);
 
-    // Tabla de administradores
+   
     db.run(`CREATE TABLE IF NOT EXISTS administradores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario TEXT UNIQUE NOT NULL,
