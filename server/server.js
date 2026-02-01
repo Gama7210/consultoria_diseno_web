@@ -1,4 +1,3 @@
-// server/server.js (versión corregida y simplificada)
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -8,7 +7,7 @@ const nodemailer = require('nodemailer');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Configurar transporter de nodemailer para enviar correos
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -17,31 +16,31 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Verificar conexión de email al iniciar
+
 transporter.verify((error, success) => {
     if (error) {
-        console.log('⚠️  Correo no configurado:', error.message);
+        console.log('Correo no configurado:', error.message);
     } else {
-        console.log('✅ Servidor de correo listo para enviar');
+        console.log('Servidor de correo listo para enviar');
     }
 });
 
-// Middleware
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos
+
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/admin', express.static(path.join(__dirname, '../admin-panel')));
 
-// Middleware de logging
+
 app.use((req, res, next) => {
     console.log(`${new Date().toLocaleTimeString()} - ${req.method} ${req.url}`);
     next();
 });
 
-// Ruta de prueba
+
 app.get('/api/test', (req, res) => {
     res.json({ 
         status: 'ok',
@@ -50,7 +49,7 @@ app.get('/api/test', (req, res) => {
     });
 });
 
-// Ruta para login de administrador
+
 app.post('/api/login', (req, res) => {
     const { usuario, password } = req.body;
     
@@ -63,7 +62,7 @@ app.post('/api/login', (req, res) => {
         });
     }
     
-    // Credenciales fijas (por ahora)
+
     if (usuario === 'admin' && password === 'admin123') {
         console.log('Login exitoso para:', usuario);
         res.json({ 
@@ -76,7 +75,7 @@ app.post('/api/login', (req, res) => {
             message: 'Login exitoso'
         });
     } else {
-        // Buscar en la base de datos
+        
         db.get(
             "SELECT id, usuario, email FROM administradores WHERE usuario = ? AND password = ?",
             [usuario, password],
@@ -111,7 +110,7 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// Ruta para obtener mensajes
+
 app.get('/api/mensajes', (req, res) => {
     console.log('Obteniendo mensajes...');
     db.all("SELECT * FROM mensajes ORDER BY fecha DESC", (err, rows) => {
@@ -124,21 +123,20 @@ app.get('/api/mensajes', (req, res) => {
     });
 });
 
-// Ruta para enviar mensaje de contacto
+
 app.post('/api/contacto', (req, res) => {
     const { nombre, email, telefono, asunto, mensaje } = req.body;
     
     console.log('Nuevo mensaje de contacto:', { nombre, email, asunto });
     
-    // Validación simple
+
     if (!nombre || !email || !asunto || !mensaje) {
         return res.status(400).json({ 
             success: false, 
             message: 'Todos los campos requeridos deben ser completados' 
         });
     }
-    
-    // Guardar en la base de datos
+
     db.run(
         `INSERT INTO mensajes (nombre, email, telefono, asunto, mensaje) 
          VALUES (?, ?, ?, ?, ?)`,
@@ -155,7 +153,7 @@ app.post('/api/contacto', (req, res) => {
             const mensajeId = this.lastID;
             console.log('Mensaje guardado con ID:', mensajeId);
             
-            // Enviar correo de confirmación al usuario
+
             const mailOptions = {
                 from: `"RivGam Digital Studio" <${process.env.EMAIL_USER}>`,
                 to: email,
@@ -203,8 +201,7 @@ app.post('/api/contacto', (req, res) => {
                 `,
                 text: `Hola ${nombre},\n\nHemos recibido tu mensaje con el asunto: ${asunto}\n\nNuestro equipo te responderá en un plazo máximo de 24 horas hábiles.\n\nAtentamente,\nEquipo RivGam Digital Studio`
             };
-            
-            // Enviar correo
+  
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
                     console.error('Error al enviar correo:', error);
@@ -213,7 +210,7 @@ app.post('/api/contacto', (req, res) => {
                 }
             });
             
-            // Enviar notificación al administrador
+          
             const adminMail = {
                 from: `"Sistema RivGam" <${process.env.EMAIL_USER}>`,
                 to: process.env.EMAIL_USER,
@@ -248,7 +245,7 @@ app.post('/api/contacto', (req, res) => {
     );
 });
 
-// Ruta para verificar si el servidor está funcionando
+
 app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'healthy',
@@ -257,12 +254,12 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Para todas las demás rutas, servir el index.html (SPA)
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Manejo de errores 404 para API
+
 app.use('/api/*', (req, res) => {
     res.status(404).json({ 
         success: false, 
@@ -270,7 +267,7 @@ app.use('/api/*', (req, res) => {
     });
 });
 
-// Middleware de manejo de errores
+
 app.use((err, req, res, next) => {
     console.error('Error:', err.stack);
     
@@ -281,15 +278,15 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Inicializar servidor
+
 app.listen(PORT, () => {
     console.log('='.repeat(50));
-    console.log('🚀 Servidor RivGam Digital Studio');
+    console.log('Servidor RivGam Digital Studio');
     console.log('='.repeat(50));
-    console.log(`✅ Servidor corriendo en: http://localhost:${PORT}`);
-    console.log(`✅ API Health Check: http://localhost:${PORT}/api/health`);
-    console.log(`✅ API Test: http://localhost:${PORT}/api/test`);
-    console.log(`✅ Panel Admin: http://localhost:${PORT}/admin/login.html`);
-    console.log(`👤 Credenciales: admin / admin123`);
+    console.log(`Servidor corriendo en: http://localhost:${PORT}`);
+    console.log(`API Health Check: http://localhost:${PORT}/api/health`);
+    console.log(`API Test: http://localhost:${PORT}/api/test`);
+    console.log(`Panel Admin: http://localhost:${PORT}/admin/login.html`);
+    console.log(`Credenciales: admin / admin123`);
     console.log('='.repeat(50));
 });
