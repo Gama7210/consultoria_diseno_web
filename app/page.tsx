@@ -6,7 +6,7 @@ import { Globe, Palette, Code, Smartphone, ArrowRight } from "lucide-react";
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-foreground">
@@ -26,7 +26,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
+      
       <section className="py-20 px-4">
         <div className="container mx-auto text-center max-w-4xl">
           <h1 className="text-5xl font-bold text-foreground mb-6 text-balance">
@@ -50,7 +50,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Services Section */}
+      
       <section className="py-16 px-4 bg-muted/50">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center text-foreground mb-12">
@@ -108,7 +108,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      
       <section className="py-20 px-4">
         <div className="container mx-auto text-center max-w-3xl">
           <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -127,7 +127,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
+      
       <footer className="border-t bg-card">
         <div className="container mx-auto px-4 py-6 text-center text-muted-foreground">
           <p>2026 R&G Consultoria Digital. Todos los derechos reservados.</p>
